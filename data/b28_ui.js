@@ -184,8 +184,22 @@
     b.textContent = "Open full page ↗";
     b.title = "Open the " + B28.T.gameName + " builder on its own page (better on phones)";
     b.addEventListener("click", openFullPage);
-    if (chooser) chooser.insertBefore(b, chooser.firstChild);
-    else document.body.insertBefore(b, document.body.firstChild);
+    // Position set here (not only in the page CSS) so it stays top-left even if the
+    // browser is still using an older cached copy of the page.
+    b.style.marginRight = "auto";
+    if (chooser) {
+      chooser.style.display = "flex";
+      chooser.style.justifyContent = "flex-end";
+      if (chooser.classList.contains("b28-chooser-float") && window.innerWidth > 640) {
+        chooser.style.left = "14px";
+        chooser.style.pointerEvents = "none";
+        for (var ci = 0; ci < chooser.children.length; ci++) chooser.children[ci].style.pointerEvents = "auto";
+        b.style.pointerEvents = "auto";
+      }
+      chooser.insertBefore(b, chooser.firstChild);
+    } else {
+      document.body.insertBefore(b, document.body.firstChild);
+    }
   }
 
   function init () {
