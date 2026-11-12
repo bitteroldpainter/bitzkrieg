@@ -1674,6 +1674,7 @@ html.game-wr .b28-game-btn.active{background:#57151c;color:#f4e5d7;border-color:
   });
 
   clearBtn.addEventListener("click", () => {
+    if (team.length && !window.confirm("Are you sure you want to clear the " + B28.T.team + "?")) return;
     team = [];
     setStatus("Cleared " + B28.T.teamLower + ".");
     // Persist roster in-browser (used by the Fighter Builder bridge)
