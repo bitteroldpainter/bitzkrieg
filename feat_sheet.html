@@ -908,6 +908,8 @@ html.game-wr .b28-game-btn.active{background:#57151c;color:#f4e5d7;border-color:
       <span class="b28-chooser-label">Choose your game:</span>
       <button type="button" class="b28-game-btn" data-game="mortalis">Mortalis</button>
       <button type="button" class="b28-game-btn" data-game="wr">Wrath &amp; Ruin</button>
+      <a id="backToRoster" class="b28-game-btn" href="roster.html" style="text-decoration:none;margin-left:8px" data-tpl="← Back to {team} Builder">← Back to Team Builder</a>
+      <script>document.getElementById("backToRoster").href = "roster.html?game=" + B28.gameKey;</script>
     </div>
     <header>
       <div>
