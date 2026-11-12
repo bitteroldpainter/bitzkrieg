@@ -1,0 +1,1360 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Feat Sheet Builder</title>
+  <script src="data/bitzkrieg_data.js"></script>
+  <script src="data/b28_ui.js"></script>
+  <script>document.title = B28.T.featTitle;</script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&display=swap">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap" rel="stylesheet">
+
+  <style>/* ===== MORTALIS skin ===== */
+html.game-mortalis{
+  --bg:#1D2024;
+  --panel:#111823cc;
+  --panel-dark:#1E2024;
+  --text:#e9f0ff;
+  --muted:#a7b2c6;
+  --line:#FC970D;
+  --orange:#FC970D;
+  --orange-bright:#FF8800;
+  --danger:#ff5c6a;
+  --cardFeatTitleSize:13px;
+  --cardFeatDescSize:12.5px;
+  --font-main:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  --font-title:"Kdam Thmor Pro",sans-serif;
+}
+html.game-mortalis *{
+  box-sizing:border-box;
+}
+html.game-mortalis body{
+  margin:0;
+  font-family:var(--font-main);
+  background:var(--bg);
+  color:var(--text);
+}
+html.game-mortalis .wrap{
+  max-width:960px;
+  margin:18px auto 60px;
+  padding:0 14px;
+}
+html.game-mortalis header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--panel);
+  position:static;
+  top:auto;
+}
+html.game-mortalis header h1{
+  margin:0;
+  font-size:18px;
+  letter-spacing:.35px;
+  color:var(--text);
+  text-shadow:#000 2px 2px 4px;
+}
+html.game-mortalis header .sub{
+  margin-top:6px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
+}
+html.game-mortalis .featReminder{
+  color:var(--orange-bright);
+}
+html.game-mortalis .controls{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  min-width:340px;
+}
+html.game-mortalis .pill, html.game-mortalis button, html.game-mortalis select, html.game-mortalis input[type="text"]{
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--text);
+  font-weight:700;
+  text-shadow:#000 2px 2px 4px;
+}
+html.game-mortalis .pill, html.game-mortalis select, html.game-mortalis input[type="text"]{
+  background:linear-gradient(180deg, rgb(98,98,98), rgb(24,24,24));
+}
+html.game-mortalis .pill{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 10px;
+  font-size:13px;
+  white-space:nowrap;
+}
+html.game-mortalis select, html.game-mortalis input[type="text"]{
+  padding:8px 10px;
+  outline:none;
+  font-size:13px;
+}
+html.game-mortalis input[type="text"]{
+  width:220px;
+}
+html.game-mortalis input[type="text"]::placeholder{
+  color:#c3cad6;
+}
+html.game-mortalis #maxFeats, html.game-mortalis #maxFeats option{
+  background:#000;
+  color:#fff;
+  text-shadow:none;
+}
+html.game-mortalis button{
+  cursor:pointer;
+  background:linear-gradient(180deg, rgba(255,170,84,1), rgba(128,51,0,1));
+  color:#fff;
+  padding:10px 12px;
+  font-size:12px;
+  transition:transform .04s ease, border-color .15s ease, background .15s ease;
+  user-select:none;
+}
+html.game-mortalis button:hover, html.game-mortalis .pill:hover{
+  background:#ffa200;
+  color:#fff;
+}
+html.game-mortalis button:active{
+  transform:translateY(1px);
+}
+html.game-mortalis .btn-accent{
+  background:linear-gradient(180deg, rgba(255,170,84,1), rgba(128,51,0,1));
+  border-color:#000;
+  color:#fff;
+}
+html.game-mortalis .btn-danger, html.game-mortalis button.btn-danger{
+  background:linear-gradient(180deg, rgba(140,48,62,1), rgb(56,0,0));
+  color:#fff;
+  border-color:var(--line);
+}
+html.game-mortalis .btn-danger:hover, html.game-mortalis button.btn-danger:hover{
+  background:#d30000;
+  color:#fff;
+}
+html.game-mortalis .btn-disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+html.game-mortalis .cats{
+  margin-top:14px;
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+}
+html.game-mortalis .col{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+html.game-mortalis .cat{
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+  background:var(--panel);
+}
+html.game-mortalis .catHead{
+  padding:10px 12px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(255,170,84,1), rgba(128,51,0,1));
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  color:#fff;
+}
+html.game-mortalis .catHead h2{
+  margin:0;
+  font-size:13.5px;
+  letter-spacing:.25px;
+  text-transform:uppercase;
+  color:#fff;
+  font-weight:900;
+  text-shadow:#000 2px 2px 4px;
+}
+html.game-mortalis .catHead .count{
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+  text-shadow:#000 2px 2px 4px;
+}
+html.game-mortalis .featList{
+  padding:6px;
+  display:grid;
+  gap:12px;
+}
+html.game-mortalis .feat{
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:18px 22px;
+  background:linear-gradient(180deg, rgba(224,221,213,1), rgba(158,156,152,1));
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  align-items:start;
+}
+html.game-mortalis .feat .nameRow{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  flex-wrap:wrap;
+  margin-bottom:4px;
+}
+html.game-mortalis .feat .name{
+  font-family:var(--font-title);
+  font-size:17px;
+  font-weight:900;
+  letter-spacing:.4px;
+  color:#000;
+  text-shadow:none;
+}
+html.game-mortalis .desc{
+  margin-top:6px;
+  color:#111;
+  font-size:12.25px;
+  font-weight:500;
+  line-height:1.3;
+  white-space:pre-wrap;
+  text-shadow:none;
+}
+html.game-mortalis .orange{
+  color:#B33D02 !important;
+  font-weight:700;
+}
+html.game-mortalis .chooseBtn{
+  min-width:84px;
+  padding:8px 10px;
+  border-radius:999px;
+  justify-self:end;
+  margin-top:1px;
+}
+html.game-mortalis .selectedGlow{
+  border-color:var(--line);
+  box-shadow:0 0 0 2px rgba(252,151,13,.25), 0 0 14px rgba(0,0,0,.20);
+}
+html.game-mortalis .note{
+  margin-top:12px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.4;
+  padding:10px 12px;
+  border:1px dashed var(--line);
+  border-radius:16px;
+  background:var(--panel);
+}
+html.game-mortalis .toast{
+  margin-top:12px;
+  display:none;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(255,92,106,.45);
+  background:rgba(255,92,106,.10);
+  color:var(--text);
+  font-size:13px;
+  white-space:pre-wrap;
+}
+html.game-mortalis .cardPage{
+  display:none;
+  max-width:1000px;
+  margin:18px auto 60px;
+  padding:0 14px;
+}
+html.game-mortalis .cardTopbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:12px 14px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--panel);
+  margin-bottom:12px;
+}
+html.game-mortalis .cardTopbar .hint{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
+}
+html.game-mortalis .cardWrap{
+  width:820px;
+  height:660px;
+  margin:0 auto;
+  position:relative;
+  overflow:hidden;
+  border-radius:0;
+  background:#fff;
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+}
+html.game-mortalis .cardBgImg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  z-index:0;
+  border-radius:0;
+}
+html.game-mortalis .cardContent{
+  position:relative;
+  z-index:2;
+  height:100%;
+  padding:70px;
+  color:#000;
+  display:flex;
+  flex-direction:column;
+}
+html.game-mortalis .cardTitleSpacer{
+  height:110px;
+  flex:0 0 auto;
+}
+html.game-mortalis .cardWarbandTitle{
+  text-align:center;
+  font-size:17px;
+  font-weight:900;
+  color:#000;
+  margin:0 0 20px 0;
+}
+html.game-mortalis .cardBody{
+  display:flex;
+  flex-direction:column;
+  gap:26px;
+  margin-top:0;
+  overflow:hidden;
+}
+html.game-mortalis .cardFeatBlock{
+  background:transparent;
+  border:none;
+  padding:0;
+}
+html.game-mortalis .cardFeatTitle{
+  font-family:var(--font-title);
+  font-weight:900;
+  font-size:var(--cardFeatTitleSize);
+  letter-spacing:.4px;
+  margin:0 0 6px 0;
+  color:#000;
+}
+html.game-mortalis .cardFeatDesc{
+  font-size:var(--cardFeatDescSize);
+  font-weight:500;
+  line-height:1.15;
+  white-space:pre-wrap;
+  color:#000;
+}
+html.game-mortalis .cardFeatDesc br{
+  display:block;
+  margin-top:.5em;
+}
+html.game-mortalis .cardWrap, html.game-mortalis .cardWrap *{
+  text-shadow:none;
+}
+html.game-mortalis .cardWrap .orange{
+  color:#B33D02 !important;
+  font-weight:900;
+}
+@media (max-width:980px){
+html.game-mortalis header{
+    position:static;
+    flex-direction:column;
+  }
+html.game-mortalis .controls{
+    min-width:0;
+    justify-content:flex-start;
+  }
+html.game-mortalis input[type="text"]{
+    width:100%;
+  }
+html.game-mortalis .cats{
+    flex-direction:column;
+  }
+}
+@media print{
+html.game-mortalis body{
+    background:#fff;
+  }
+html.game-mortalis .wrap, html.game-mortalis header, html.game-mortalis .cats, html.game-mortalis .note, html.game-mortalis #toast{
+    display:none !important;
+  }
+html.game-mortalis .cardPage{
+    display:block !important;
+  }
+html.game-mortalis .cardTopbar{
+    display:none !important;
+  }
+html.game-mortalis .cardWrap{
+    border:0 !important;
+  }
+}
+html.game-mortalis .cardBody{
+  gap:var(--cardBodyGap, 26px);
+}
+html.game-mortalis .cardFeatTitle{
+  font-size:var(--cardFitTitleSize, var(--cardFeatTitleSize));
+}
+html.game-mortalis .cardFeatDesc{
+  font-size:var(--cardFitDescSize, var(--cardFeatDescSize));
+  line-height:var(--cardFitLineHeight, 1.15);
+}
+</style>
+  <style>/* ===== WRATH & RUIN skin ===== */
+html.game-wr{
+  --bg:#1D2024;
+  --panel:#1E2024;
+  --panel-soft:rgba(17,24,35,.72);
+  --panel-teal:linear-gradient(180deg, rgba(50,105,122,1), rgba(28,63,74,.5));
+  --teal-grad:linear-gradient(180deg, rgba(94,204,196,1), rgba(0,179,166,.50));
+  --teal-grad-dark:linear-gradient(0deg, rgba(0,179,166,.5), rgba(0,0,0,.12));
+  --danger-grad:linear-gradient(180deg, rgba(140,48,62,1), rgba(0,0,0,1));
+  --text:#e9f0ff;
+  --text2:#fff;
+  --muted:#D3D7DE;
+  --line:#59A199;
+  --line-soft:rgba(0,179,166,.45);
+  --accent:#5ECCC4;
+  --accent-dark:#00796f;
+  --danger:#ff5c73;
+  --cardFeatTitleSize:13px;
+  --cardFeatDescSize:12.5px;
+  --font-main:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  --font-title:"Kdam Thmor Pro",system-ui,sans-serif;
+}
+html.game-wr *{box-sizing:border-box;}
+html.game-wr body{
+  margin:0;
+  font-family:var(--font-main);
+  background:var(--bg);
+  color:var(--text);
+}
+html.game-wr .wrap{
+  max-width:960px;
+  margin:0 auto 60px;
+  padding:18px 14px;
+}
+html.game-wr header{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:0 0 12px;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  position:static;
+}
+html.game-wr header h1{
+  margin:0;
+  font-size:1.4rem;
+  font-weight:600;
+  letter-spacing:.2px;
+  color:var(--text);
+  text-align:center;
+  text-shadow:0 0 4px #000;
+}
+html.game-wr header .sub{
+  max-width:760px;
+  margin:6px auto 0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
+  text-align:center;
+}
+html.game-wr .featReminder{
+  color:var(--accent);
+  font-weight:800;
+}
+html.game-wr .controls{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+  justify-content:center;
+  width:100%;
+}
+html.game-wr .pill, html.game-wr button, html.game-wr select, html.game-wr input[type="text"]{
+  border:1px solid var(--line);
+  color:var(--text2);
+  font-family:var(--font-main);
+}
+html.game-wr .pill, html.game-wr button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:36px;
+  border-radius:999px;
+  padding:0 12px;
+  font-size:0.85rem;
+  font-weight:500;
+  line-height:1;
+}
+html.game-wr .pill, html.game-wr select, html.game-wr input[type="text"]{
+  background:rgba(17,24,35,.7);
+}
+html.game-wr .pill{
+  gap:8px;
+  white-space:nowrap;
+  color:var(--text);
+}
+html.game-wr select, html.game-wr input[type="text"]{
+  border-radius:10px;
+  padding:8px 10px;
+  outline:none;
+  font-size:13px;
+  font-weight:800;
+  color:var(--text);
+}
+html.game-wr input[type="text"]{
+  width:220px;
+  background:#0E2226;
+}
+html.game-wr input[type="text"]::placeholder{color:#B0B6C2;}
+html.game-wr #maxFeats, html.game-wr #maxFeats option{
+  background:#0E2226;
+  color:#fff;
+}
+html.game-wr button{
+  cursor:pointer;
+  background:var(--teal-grad-dark);
+  color:var(--text2);
+  transition:filter .15s ease, background .15s ease, transform .04s ease;
+  user-select:none;
+}
+html.game-wr button:hover, html.game-wr .pill:hover{
+  filter:brightness(1.08);
+}
+html.game-wr button:active{transform:translateY(1px);}
+html.game-wr .btn-accent{
+  background:var(--teal-grad);
+  color:#000;
+  border-color:#101213;
+}
+html.game-wr .btn-accent:hover{background:#5ECCC4;}
+html.game-wr .btn-danger, html.game-wr button.btn-danger{
+  background:var(--danger-grad);
+  color:#fff;
+  border-color:#000;
+}
+html.game-wr .btn-danger:hover, html.game-wr button.btn-danger:hover{
+  background:#930056;
+  color:#fff;
+}
+html.game-wr .btn-disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+html.game-wr .cats{
+  margin-top:14px;
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+}
+html.game-wr .col{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+html.game-wr .cat{
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+  background:rgba(17,24,35,.8);
+}
+html.game-wr .catHead{
+  padding:10px 12px;
+  border-bottom:1px solid var(--line);
+  background:var(--panel-teal);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  color:#fff;
+}
+html.game-wr .catHead h2{
+  margin:0;
+  font-size:13.5px;
+  letter-spacing:.35px;
+  text-transform:uppercase;
+  color:#fff;
+  font-weight:900;
+  text-shadow:0 0 4px #000;
+}
+html.game-wr .catHead .count{
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+  text-shadow:0 0 4px #000;
+}
+html.game-wr .featList{
+  padding:8px;
+  display:grid;
+  gap:12px;
+}
+html.game-wr .feat{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:18px 22px;
+  background:linear-gradient(180deg, rgba(238,236,230,1), rgba(172,170,166,1));
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  align-items:start;
+}
+html.game-wr .feat .nameRow{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  flex-wrap:wrap;
+  margin-bottom:4px;
+}
+html.game-wr .feat .name{
+  font-family:var(--font-title);
+  font-size:17px;
+  font-weight:900;
+  letter-spacing:.35px;
+  color:#000;
+  text-shadow:none;
+}
+html.game-wr .desc{
+  margin-top:6px;
+  color:#111;
+  font-size:12.25px;
+  font-weight:500;
+  line-height:1.3;
+  white-space:pre-wrap;
+  text-shadow:none;
+}
+html.game-wr .orange{
+  color:#00796f !important;
+  font-weight:800;
+}
+html.game-wr .chooseBtn{
+  min-width:84px;
+  padding:0 12px;
+  border-radius:999px;
+  justify-self:end;
+  margin-top:1px;
+}
+html.game-wr .selectedGlow{
+  border-color:var(--accent);
+  box-shadow:0 0 0 2px rgba(94,204,196,.28), 0 0 16px rgba(0,0,0,.25);
+}
+html.game-wr .note{
+  margin-top:12px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.4;
+  padding:10px 12px;
+  border:1px dashed var(--line);
+  border-radius:14px;
+  background:rgba(17,24,35,.55);
+}
+html.game-wr .toast{
+  margin-top:12px;
+  display:none;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(255,92,115,.45);
+  background:rgba(255,92,115,.10);
+  color:var(--text);
+  font-size:13px;
+  white-space:pre-wrap;
+}
+html.game-wr .cardPage{
+  display:none;
+  max-width:1000px;
+  margin:18px auto 60px;
+  padding:0 14px;
+}
+html.game-wr .cardTopbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:12px 14px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(17,24,35,.8);
+  margin-bottom:12px;
+}
+html.game-wr .cardTopbar .hint{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
+}
+html.game-wr .cardWrap{
+  width:820px;
+  height:660px;
+  margin:0 auto;
+  position:relative;
+  overflow:hidden;
+  border-radius:0;
+  background:#fff;
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+}
+html.game-wr .cardBgImg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  z-index:0;
+  border-radius:0;
+}
+html.game-wr .cardContent{
+  position:relative;
+  z-index:2;
+  height:100%;
+  padding:70px;
+  color:#000;
+  display:flex;
+  flex-direction:column;
+}
+html.game-wr .cardTitleSpacer{height:110px;flex:0 0 auto;}
+html.game-wr .cardWarbandTitle{
+  text-align:center;
+  font-size:17px;
+  font-weight:900;
+  color:#000;
+  margin:0 0 20px 0;
+}
+html.game-wr .cardBody{
+  display:flex;
+  flex-direction:column;
+  gap:26px;
+  margin-top:0;
+  overflow:hidden;
+}
+html.game-wr .cardFeatBlock{background:transparent;border:none;padding:0;}
+html.game-wr .cardFeatTitle{
+  font-family:var(--font-title);
+  font-weight:900;
+  font-size:var(--cardFeatTitleSize);
+  letter-spacing:.4px;
+  margin:0 0 6px 0;
+  color:#000;
+}
+html.game-wr .cardFeatDesc{
+  font-size:var(--cardFeatDescSize);
+  font-weight:500;
+  line-height:1.15;
+  white-space:pre-wrap;
+  color:#000;
+}
+html.game-wr .cardFeatDesc br{display:block;margin-top:.5em;}
+html.game-wr .cardWrap, html.game-wr .cardWrap *{text-shadow:none;}
+html.game-wr .cardWrap .orange{color:#00796f !important;font-weight:900;}
+@media (max-width:980px){
+html.game-wr header{position:static;}
+html.game-wr .controls{justify-content:center;}
+html.game-wr input[type="text"]{width:100%;}
+html.game-wr .cats{flex-direction:column;}
+}
+@media print{
+html.game-wr body{background:#fff;}
+html.game-wr .wrap, html.game-wr header, html.game-wr .cats, html.game-wr .note, html.game-wr #toast{display:none !important;}
+html.game-wr .cardPage{display:block !important;}
+html.game-wr .cardTopbar{display:none !important;}
+html.game-wr .cardWrap{border:0 !important;}
+}
+html.game-wr .cardBody{gap:var(--cardBodyGap, 26px);}
+html.game-wr .cardFeatTitle{font-size:var(--cardFitTitleSize, var(--cardFeatTitleSize));}
+html.game-wr .cardFeatDesc{
+  font-size:var(--cardFitDescSize, var(--cardFeatDescSize));
+  line-height:var(--cardFitLineHeight, 1.15);
+}
+html.game-wr{
+  --bg:#151b1e;
+  --panel:#20272a;
+  --panel-soft:#1c2427;
+  --panel-teal:linear-gradient(180deg,#293336,#20282b);
+  --teal-grad:linear-gradient(180deg,#742a30,#4c171d);
+  --teal-grad-dark:linear-gradient(180deg,#30383a,#20282b);
+  --danger-grad:linear-gradient(180deg,#6b252c,#42171d);
+  --text:#e9dfcf;
+  --text2:#f2e7d8;
+  --muted:#b2a99d;
+  --line:#786047;
+  --line-soft:#55483a;
+  --accent:#a58a64;
+  --accent-dark:#8e7153;
+  --danger:#9c4a4e;
+  --font-main:Georgia,'Times New Roman',serif;
+  --font-title:'Cinzel',Georgia,serif;
+}
+html.game-wr body{background:radial-gradient(ellipse at 50% -10%,#243137 0%,#171e21 52%,#13191c 100%) fixed;color:var(--text);}
+html.game-wr .wrap{max-width:1100px;padding:16px 16px 55px;}
+html.game-wr header{gap:8px;padding:8px 0 14px;}
+html.game-wr header h1{font-family:'Cinzel',Georgia,serif;font-size:clamp(21px,3vw,29px);font-weight:600;letter-spacing:1.1px;color:#d7c4a7;text-shadow:0 2px 4px #090b0c;}
+html.game-wr header .sub{font-family:Georgia,serif;font-size:13px;color:#c6bcad;line-height:1.5;}
+html.game-wr .featReminder{color:#c4aa84;font-weight:600;}
+html.game-wr .controls{gap:9px;}
+html.game-wr .controls button, html.game-wr .cardTopbar button{font-family:'Cinzel',Georgia,serif;font-size:11px;letter-spacing:.25px;font-weight:600;min-height:39px;padding:0 14px;}
+html.game-wr button, html.game-wr .pill{border-radius:5px;border-color:#796147;box-shadow:inset 0 1px 2px rgba(255,255,255,.055),inset 0 -3px 6px rgba(0,0,0,.28),0 1px 2px rgba(0,0,0,.24);}
+html.game-wr button{background:linear-gradient(180deg,#333c3f,#20282b);color:#e8dccc;}
+html.game-wr button:hover{filter:brightness(1.16);}
+html.game-wr .btn-accent{background:linear-gradient(180deg,#792d33,#501a20);border-color:#966b53;color:#f4e8d8;}
+html.game-wr .btn-accent:hover{background:linear-gradient(180deg,#8c353c,#602027);color:#fff0de;}
+html.game-wr .btn-danger, html.game-wr button.btn-danger{background:linear-gradient(180deg,#5d262a,#3d1a1e);border-color:#7e4a46;color:#eadbd5;}
+html.game-wr .btn-danger:hover, html.game-wr button.btn-danger:hover{background:#723039;color:#fff;}
+html.game-wr .pill{background:#1b2326;color:#dfd4c4;padding:0 11px;min-height:39px;font-family:Georgia,serif;}
+html.game-wr select, html.game-wr input[type='text']{background:#151d20;border:1px solid #786047;border-radius:5px;color:#e9dfcf;font-family:Georgia,serif;font-weight:normal;box-shadow:inset 0 2px 5px rgba(0,0,0,.4);}
+html.game-wr input[type='text']{width:225px;min-height:39px;}
+html.game-wr input[type='text']::placeholder{color:#a89d91;}
+html.game-wr #maxFeats, html.game-wr #maxFeats option{background:#1a2225;color:#e9dfcf;}
+html.game-wr .cats{gap:13px;margin-top:12px;}
+html.game-wr .col{gap:13px;}
+html.game-wr .cat{border:1px solid #67543f;border-radius:5px;background:linear-gradient(160deg,#202a2e,#1a2225);box-shadow:inset 0 2px 9px rgba(0,0,0,.32),0 3px 8px rgba(0,0,0,.18);}
+html.game-wr .catHead{background:linear-gradient(180deg,#30383a,#242b2e);border-bottom:1px solid #786047;padding:11px 14px;color:#ddc9a8;}
+html.game-wr .catHead h2{font-family:'Cinzel',Georgia,serif;font-size:13px;font-weight:600;letter-spacing:.6px;color:#d9c5a7;text-shadow:0 1px 2px #111;}
+html.game-wr .catHead .count{font-family:Georgia,serif;font-size:12px;color:#c7b18e;font-weight:normal;}
+html.game-wr .featList{padding:9px;gap:9px;}
+html.game-wr .feat{border:1px solid #635441;border-radius:5px;padding:14px 15px;background:linear-gradient(180deg,#252c2e,#1c2426);box-shadow:inset 0 2px 5px rgba(0,0,0,.25);gap:12px;}
+html.game-wr .feat .name{font-family:'Cinzel',Georgia,serif;font-size:14px;font-weight:600;letter-spacing:.1px;color:#e1d0b5;}
+html.game-wr .desc{color:#d0c8bd;font-family:Georgia,serif;font-size:12.5px;font-weight:normal;line-height:1.43;}
+html.game-wr .orange{color:#c6a47b !important;font-weight:700;}
+html.game-wr .chooseBtn{min-width:78px;min-height:32px;padding:0 10px;font-size:10px;font-family:'Cinzel',Georgia,serif;}
+html.game-wr .selectedGlow{border-color:#a08563;background:linear-gradient(180deg,#30272a,#242124);box-shadow:inset 0 2px 7px rgba(0,0,0,.4),0 0 0 1px rgba(160,133,99,.2);}
+html.game-wr .note{border:1px solid #594b3c;border-radius:5px;background:#1b2326;color:#b8afa3;}
+html.game-wr .toast{border-radius:5px;border-color:#82544b;background:#392327;color:#e9dfcf;}
+html.game-wr .cardTopbar{background:#20282b;border-color:#786047;border-radius:5px;}
+html.game-wr .cardTopbar .hint{color:#c4b9a8;}
+@media(max-width:640px){
+html.game-wr .feat{padding:12px;grid-template-columns:minmax(0,1fr) auto;}
+html.game-wr .feat .name{font-size:12px;}
+html.game-wr .desc{font-size:12px;}
+html.game-wr .chooseBtn{min-width:65px;padding:0 7px;}
+html.game-wr .controls{gap:7px;}
+}
+html.game-wr .feat{
+  background:linear-gradient(180deg,#eeeae1 0%,#ddd6ca 100%);
+  border-color:#927d63;
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.55),inset 0 -3px 7px rgba(75,55,38,.12),0 2px 4px rgba(0,0,0,.2);
+}
+html.game-wr .feat .name{color:#29221d;}
+html.game-wr .feat .desc{color:#302b26;}
+html.game-wr .feat .orange{color:#805044 !important;font-weight:700;}
+html.game-wr .feat.selectedGlow{
+  background:linear-gradient(180deg,#efe5da 0%,#dfd0c2 100%);
+  border-color:#874e4b;
+  box-shadow:inset 0 1px 3px rgba(255,255,255,.45),inset 0 -3px 7px rgba(85,39,42,.12),0 0 0 1px rgba(135,78,75,.3);
+}
+html.game-wr .feat .name{font-size:16px;}
+html.game-wr .feat .desc{font-size:14px;}
+html.game-wr .feat .chooseBtn{border-radius:5px;font-size:12px;min-width:84px;min-height:35px;padding:0 12px;}
+@media(max-width:640px){
+html.game-wr .feat .name{font-size:14px;}
+html.game-wr .feat .desc{font-size:13.5px;}
+html.game-wr .feat .chooseBtn{font-size:12px;min-width:76px;padding:0 9px;}
+}
+html.game-wr .feat.selectedGlow{
+  background:linear-gradient(180deg,#e1c5bc 0%,#d5b3a9 100%);
+  border:2px solid #853c46;
+  border-left:5px solid #853c46;
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.35),inset 0 -4px 9px rgba(93,38,43,.13),0 0 0 1px rgba(133,60,70,.24),0 3px 7px rgba(0,0,0,.22);
+}
+html.game-wr .feat.selectedGlow .name{color:#4a2028;}
+html.game-wr .feat.selectedGlow .desc{color:#302321;}
+html.game-wr .feat.selectedGlow .orange{color:#77343b !important;}
+html.game-wr .cardWrap .orange{color:#77343b !important;}
+</style>
+  <style>/* ===== Game chooser ===== */
+.b28-chooser{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:0 auto 12px;padding:8px 10px;border-radius:10px;font-size:.9rem}
+.b28-chooser-label{font-weight:600;margin-right:4px}
+.b28-game-btn{cursor:pointer;padding:.35rem .9rem;border-radius:999px;font-size:.9rem;font-weight:600;line-height:1.2}
+html.game-mortalis .b28-chooser{background:linear-gradient(0deg,rgba(35,41,43,1),rgba(0,0,0,1));border:1px solid #ff9f1c;color:#DFE4EB;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+html.game-mortalis .b28-game-btn{background:#101216;border:1px solid #374151;color:#e5e7eb}
+html.game-mortalis .b28-game-btn:hover{border-color:#ff9f1c}
+html.game-mortalis .b28-game-btn.active{background:linear-gradient(180deg,rgba(255,170,84,1),rgba(128,51,0,1));color:#fff;border-color:#101213}
+html.game-wr .b28-chooser{background:linear-gradient(145deg,#161d21,#111619);border:1px solid #786047;border-radius:5px;color:#e7d9c3;font-family:Georgia,"Times New Roman",serif}
+html.game-wr .b28-chooser-label{font-family:"Cinzel",Georgia,serif;font-weight:500}
+html.game-wr .b28-game-btn{background:#17191b;border:1px solid #695640;border-radius:4px;color:#dfd5c6;font-family:"Cinzel",Georgia,serif;font-weight:600}
+html.game-wr .b28-game-btn:hover{background:#34302d}
+html.game-wr .b28-game-btn.active{background:#57151c;color:#f4e5d7;border-color:#9a604f}
+/* First visit: full-screen "Choose Mortalis or Wrath & Ruin" */
+.b28-welcome{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(5,6,8,.92)}
+.b28-welcome-box{max-width:560px;width:100%;text-align:center;color:#eee;font-family:Georgia,"Times New Roman",serif}
+.b28-welcome-box h1{font-family:"Cinzel",Georgia,serif;font-weight:600;font-size:clamp(1.3rem,4.5vw,2rem);margin:0 0 6px;letter-spacing:.02em}
+.b28-welcome-box p{margin:0 0 18px;color:#bdb7ad}
+.b28-welcome-choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.b28-welcome-choices{grid-template-columns:1fr}}
+.b28-welcome-choice{cursor:pointer;border-radius:10px;padding:18px 12px;text-align:center;font-size:1.25rem;line-height:1.3}
+.b28-welcome-choice small{display:block;font-size:.8rem;opacity:.8;margin-top:4px}
+.b28-welcome-choice.mortalis{background:linear-gradient(180deg,rgba(255,170,84,1),rgba(128,51,0,1));border:1px solid #ff9f1c;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:700}
+.b28-welcome-choice.wr{background:#57151c;border:1px solid #9a604f;color:#f4e5d7;font-family:"Cinzel",Georgia,serif;font-weight:600}
+.b28-welcome-choice:hover{filter:brightness(1.15)}
+
+#pickerPage .b28-chooser{margin:0 auto 12px}
+</style>
+</head>
+
+<body>
+  <div class="wrap" id="pickerPage">
+    <div class="b28-chooser" role="group" aria-label="Choose your game">
+      <span class="b28-chooser-label">Choose your game:</span>
+      <button type="button" class="b28-game-btn" data-game="mortalis">Mortalis</button>
+      <button type="button" class="b28-game-btn" data-game="wr">Wrath &amp; Ruin</button>
+    </div>
+    <header>
+      <div>
+        <h1 data-tpl="{gameName} – Feat Picker">Mortalis – Feat Picker</h1>
+        <div class="sub">
+          Pick up to <b>2–4 Feats</b>. Generate opens a new tab with a printable Feat card. </br><b class="featReminder">All Feats last until the end of Turn, except those marked with * - they last for this Activation.</b>
+        </div>
+      </div>
+
+      <div class="controls">
+<button id="saveFeatSheetBtn">Save Feat Sheet</button>
+<button id="loadFeatSheetBtn">Load Feat Sheet</button>
+<button class="btn-danger" id="clearFeatSheetBtn">Clear Feat Sheet</button>
+        <div class="pill">
+          <span>Max feats:</span>
+          <select id="maxFeats">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+          </select>
+        </div>
+
+        <input id="teamName" type="text" placeholder="Optional: Team name" /><script>document.getElementById("teamName").placeholder = "Optional: " + B28.T.team + " name";</script>
+        <div class="pill" id="pickedInfo">Picked: 0 / 4</div>
+
+        <button class="btn-accent" id="btnGenerate">Generate Feat Sheet</button>
+        <button class="btn-danger" id="btnClear">Clear</button>
+      </div>
+    </header>
+
+    <div id="toast" class="toast"></div>
+    <div class="cats"><div class="col" id="colLeft"></div><div class="col" id="colRight"></div></div>
+
+    <div class="note">
+      Tip: In Chrome Print → More settings → enable <b>Background graphics</b> (usually needed for best results).
+    </div>
+  </div>
+
+
+  <!-- Card page (single-page toggle) -->
+  <div class="cardPage" id="cardPage" aria-hidden="true">
+    <div class="cardTopbar">
+      <div class="hint">
+        Tip: If your background image doesn’t print, in Chrome Print → More settings → enable <b>Background graphics</b>.
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+        <button class="btn-accent" id="btnCardPrint">Print</button>
+        <button id="btnCardBack">Back</button>
+      </div>
+    </div>
+
+    <div class="cardWrap" role="document" aria-label="Feat sheet card">
+      <img class="cardBgImg" src="" alt=""><script>document.querySelectorAll(".cardBgImg").forEach(function (i) { i.src = B28.asset("featBg"); });</script>
+      <div class="cardContent">
+        <div class="cardTitleSpacer" aria-hidden="true"></div>
+        <div class="cardWarbandTitle" id="cardWarbandTitle"></div>
+        <div class="cardBody" id="cardBody"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Error surfacing (helps if something breaks)
+  function showToast(msg){
+    const t = document.getElementById("toast");
+    if(!t) return;
+    t.textContent = msg;
+    t.style.display = "block";
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { t.style.display = "none"; }, 2600);
+  }
+  window.addEventListener("error", (e) => showToast("JS error: " + (e.message || "Unknown")));
+  window.addEventListener("unhandledrejection", (e) => showToast("JS error: " + ((e.reason && e.reason.message) ? e.reason.message : "Unhandled rejection")));
+
+  // Feat data (pages 24–30)
+  const FEATS = B28.lists().FEATS;
+
+  // State
+  let selected = [];
+  let max = 4;
+
+  const FEAT_SHEET_STORAGE_KEY = B28.game.featStorageKey;
+
+  function collectFeatSheetState(){
+    return {
+      selected: selected.slice(),
+      max: max,
+      maxFeats: elMax ? elMax.value : String(max),
+      teamName: teamName ? teamName.value : ""
+    };
+  }
+
+  function saveFeatSheetState(){
+    try{
+      localStorage.setItem(FEAT_SHEET_STORAGE_KEY, JSON.stringify(collectFeatSheetState()));
+    }catch(e){}
+  }
+
+  function applyFeatSheetState(state){
+    if(!state || typeof state !== "object") return;
+
+    if(elMax && state.maxFeats != null){
+      elMax.value = String(state.maxFeats);
+      max = parseInt(elMax.value, 10) || 4;
+    } else if(state.max != null){
+      max = parseInt(state.max, 10) || 4;
+      if(elMax) elMax.value = String(max);
+    }
+
+    if(teamName && state.teamName != null){
+      teamName.value = String(state.teamName);
+    }
+
+    selected = Array.isArray(state.selected) ? state.selected.slice(0, max) : [];
+    render();
+    saveFeatSheetState();
+  }
+
+  function loadFeatSheetState(){
+    try{
+      const raw = localStorage.getItem(FEAT_SHEET_STORAGE_KEY);
+      if(!raw) return;
+      applyFeatSheetState(JSON.parse(raw));
+    }catch(e){}
+  }
+
+  function downloadFeatSheetState(){
+    const blob = new Blob(
+      [JSON.stringify(collectFeatSheetState(), null, 2)],
+      { type: "application/json" }
+    );
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = (B28.gameKey === "mortalis" ? "Mortalis" : "Wrath_Ruin") + "_Feat_Sheet.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+
+  function readFeatSheetFile(file){
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        applyFeatSheetState(JSON.parse(reader.result));
+      }catch(e){
+        showToast("Invalid Feat Sheet file.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function featId(cat, featName){ return cat + "::" + featName; }
+  function getFeatById(id){
+    const parts = id.split("::");
+    const cat = parts[0];
+    const name = parts.slice(1).join("::");
+    const c = FEATS.find(x => x.category === cat);
+    if(!c) return null;
+    const f = c.feats.find(y => y.name === name);
+    if(!f) return null;
+    return { category: cat, ...f };
+  }
+
+  const elLeft = document.getElementById("colLeft");
+  const elRight = document.getElementById("colRight");
+  const elMax = document.getElementById("maxFeats");
+  const elPickedInfo = document.getElementById("pickedInfo");
+  const teamName = document.getElementById("teamName");
+  const btnGenerate = document.getElementById("btnGenerate");
+  const btnClear = document.getElementById("btnClear");
+
+  function updateTop(){
+    elPickedInfo.textContent = "Picked: " + selected.length + " / " + max;
+    btnGenerate.classList.toggle("btn-disabled", selected.length === 0);
+  }
+
+  function toggleSelect(id){
+    const idx = selected.indexOf(id);
+    if(idx >= 0){
+      selected.splice(idx, 1);
+      render();
+      saveFeatSheetState();
+      return;
+    }
+    if(selected.length >= max){
+      showToast("Max feats is " + max + ". Remove one first.");
+      return;
+    }
+    selected.push(id);
+    render();
+    saveFeatSheetState();
+  }
+
+  function render(){
+    elLeft.innerHTML = "";
+    elRight.innerHTML = "";
+    FEATS.forEach(cat => {
+      const box = document.createElement("section");
+      box.className = "cat";
+
+      const head = document.createElement("div");
+      head.className = "catHead";
+
+      const h = document.createElement("h2");
+      h.textContent = cat.category;
+
+      const count = document.createElement("div");
+      count.className = "count";
+      count.textContent = String(cat.feats.length);
+
+      head.appendChild(h);
+      head.appendChild(count);
+
+      const list = document.createElement("div");
+      list.className = "featList";
+
+      cat.feats.forEach(f => {
+        const id = featId(cat.category, f.name);
+        const isSel = selected.includes(id);
+
+        const item = document.createElement("div");
+        item.className = "feat" + (isSel ? " selectedGlow" : "");
+
+        const left = document.createElement("div");
+
+        const nameRow = document.createElement("div");
+        nameRow.className = "nameRow";
+
+        const n = document.createElement("div");
+        n.className = "name";
+        n.textContent = f.name;
+
+nameRow.appendChild(n);
+
+        const d = document.createElement("div");
+        d.className = "desc";
+        d.innerHTML = f.text;
+
+        left.appendChild(nameRow);
+        left.appendChild(d);
+
+        const btn = document.createElement("button");
+        btn.className = "chooseBtn " + (isSel ? "btn-danger" : "btn-accent");
+        btn.textContent = isSel ? "Remove" : "Choose";
+        btn.addEventListener("click", () => toggleSelect(id));
+
+        item.appendChild(left);
+        item.appendChild(btn);
+        list.appendChild(item);
+      });
+
+      box.appendChild(head);
+      box.appendChild(list);
+      if(["Movement","Other","Defense"].includes(cat.category)){
+        elLeft.appendChild(box);
+      } else {
+        elRight.appendChild(box);
+      }
+    });
+
+    updateTop();
+  }
+
+  elMax.addEventListener("change", () => {
+    max = parseInt(elMax.value, 10);
+    if(selected.length > max){
+      selected = selected.slice(0, max);
+      showToast("Max set to " + max + ". Trimmed selection to fit.");
+    }
+    render();
+    saveFeatSheetState();
+  });
+
+  btnClear.addEventListener("click", () => {
+    selected = [];
+    render();
+    saveFeatSheetState();
+  });
+
+  function escapeHtml(str){
+    return String(str || "")
+      .split("&").join("&amp;")
+      .split("<").join("&lt;")
+      .split(">").join("&gt;")
+      .split('"').join("&quot;")
+      .split("'").join("&#039;");
+  }
+
+
+  function fitGeneratedCardText(){
+    const cardBody = document.getElementById("cardBody");
+    if(!cardBody) return;
+
+    let titleSize = 13;
+    let descSize = 12.5;
+    let gap = 26;
+    let lineHeight = 1.15;
+
+    const minTitleSize = 8.5;
+    const minDescSize = 8.2;
+    const minGap = 6;
+    const minLineHeight = 1.02;
+
+    function apply(){
+      cardBody.style.setProperty("--cardFitTitleSize", titleSize + "px");
+      cardBody.style.setProperty("--cardFitDescSize", descSize + "px");
+      cardBody.style.setProperty("--cardBodyGap", gap + "px");
+      cardBody.style.setProperty("--cardFitLineHeight", String(lineHeight));
+    }
+
+    apply();
+
+    let guard = 0;
+    while(cardBody.scrollHeight > cardBody.clientHeight && guard < 100){
+      if(gap > minGap){
+        gap -= 1;
+      } else if(descSize > minDescSize){
+        descSize -= 0.25;
+      } else if(titleSize > minTitleSize){
+        titleSize -= 0.25;
+      } else if(lineHeight > minLineHeight){
+        lineHeight -= 0.01;
+      } else {
+        break;
+      }
+      apply();
+      guard++;
+    }
+  }
+
+  function generateCardPage(){
+    const feats = selected.map(getFeatById).filter(Boolean);
+
+    // Populate warband title
+    const titleEl = document.getElementById("cardWarbandTitle");
+    const tn = (teamName && teamName.value) ? teamName.value.trim() : "";
+    titleEl.textContent = tn;
+
+    // Populate card with ONLY feat title + description
+    const cardBody = document.getElementById("cardBody");
+    cardBody.innerHTML = "";
+
+    if(feats.length === 0){
+      const empty = document.createElement("div");
+      empty.className = "cardFeatBlock";
+      empty.innerHTML = '<div class="cardFeatDesc">No feats selected.</div>';
+      cardBody.appendChild(empty);
+    } else {
+      feats.forEach(f => {
+        const block = document.createElement("div");
+        block.className = "cardFeatBlock";
+
+        const t = document.createElement("div");
+        t.className = "cardFeatTitle";
+        t.textContent = f.name;
+
+        const d = document.createElement("div");
+        d.className = "cardFeatDesc";
+        d.innerHTML = f.text; // already has spaces instead of \n in this file
+
+        block.appendChild(t);
+        block.appendChild(d);
+        cardBody.appendChild(block);
+      });
+    }
+
+    // Toggle to card view
+    document.getElementById("pickerPage").style.display = "none";
+    const cp = document.getElementById("cardPage");
+    cp.style.display = "block";
+    cp.setAttribute("aria-hidden", "false");
+
+    requestAnimationFrame(() => {
+      fitGeneratedCardText();
+      requestAnimationFrame(fitGeneratedCardText);
+    });
+  }
+
+  // Card buttons
+  document.getElementById("btnCardBack").addEventListener("click", () => {
+    document.getElementById("cardPage").style.display = "none";
+    document.getElementById("cardPage").setAttribute("aria-hidden", "true");
+    document.getElementById("pickerPage").style.display = "block";
+    window.scrollTo(0, 0);
+  });
+
+  document.getElementById("btnCardPrint").addEventListener("click", () => {
+    fitGeneratedCardText();
+    window.print();
+  });
+
+  btnGenerate.addEventListener("click", () => {
+    if(selected.length === 0){
+      showToast("Choose at least 1 feat first.");
+      return;
+    }
+    generateCardPage();
+  });
+
+
+  if(teamName){
+    teamName.addEventListener("input", saveFeatSheetState);
+  }
+
+  const btnSaveFeatSheet = document.getElementById("saveFeatSheetBtn");
+  const btnLoadFeatSheet = document.getElementById("loadFeatSheetBtn");
+  const btnClearFeatSheet = document.getElementById("clearFeatSheetBtn");
+  const featSheetLoadInput = document.getElementById("featSheetLoadInput");
+
+  if(btnSaveFeatSheet){
+    btnSaveFeatSheet.addEventListener("click", downloadFeatSheetState);
+  }
+
+  if(btnLoadFeatSheet && featSheetLoadInput){
+    btnLoadFeatSheet.addEventListener("click", () => featSheetLoadInput.click());
+    featSheetLoadInput.addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      readFeatSheetFile(file);
+      featSheetLoadInput.value = "";
+    });
+  }
+
+  if(btnClearFeatSheet){
+    btnClearFeatSheet.addEventListener("click", () => {
+      if(!confirm("Clear Feat Sheet?")) return;
+      localStorage.removeItem(FEAT_SHEET_STORAGE_KEY);
+      selected = [];
+      max = 4;
+      if(elMax) elMax.value = "4";
+      if(teamName) teamName.value = "";
+      render();
+    });
+  }
+
+  loadFeatSheetState();
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(fitGeneratedCardText).catch(() => {});
+  }
+
+  render();
+});
+</script>
+<input id="featSheetLoadInput" type="file" accept=".json,application/json" style="display:none;">
+
+</body>
+</html>

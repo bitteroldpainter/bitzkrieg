@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Team / Warband Builder</title>
+  <script src="data/bitzkrieg_data.js"></script>
+  <script src="data/b28_ui.js"></script>
+  <script>document.title = B28.T.rosterTitle;</script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Libre+Baskerville:wght@400;700&display=swap">
+  <style>/* ===== MORTALIS skin ===== */
+html.game-mortalis{
+    --bg:#0b0f14; --panel:linear-gradient(0deg, rgba(35,41,43,1), rgba(0,0,0,1)); --panel2:#3D3D3D;--panel3: linear-gradient(180deg, rgba(255,170,84,1), rgba(128,51,0,1));
+    
+    --text:#e9f0ff;--text2:#fff; --muted:#a7b2c6;
+
+    
+    --line:#FC970D;
+   --line2:#000000;
+    --accent:#42d3ff; --danger:#ff5c73; --ok:#66ffb3;
+  }
+html.game-mortalis *{box-sizing:border-box}
+html.game-mortalis body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:#1D2024;color:var(--text)}
+html.game-mortalis .wrap{max-width:960px;margin:0 auto;padding:18px}
+html.game-mortalis .topbar{
+  display:flex;
+  flex-direction:column;          
+  align-items:center;             
+  gap:6px;                        
+  margin-bottom:8px;              
+}
+html.game-mortalis .headerLogo{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+html.game-mortalis .headerLogo img{
+  height:150px;
+  width:499px;
+  object-fit:contain;
+  display:block;
+}
+html.game-mortalis .title{display:flex;flex-direction:column;gap:2px}
+html.game-mortalis .title h1{margin:0;font-size:25px;letter-spacing:.3px}
+html.game-mortalis .title .sub{color:var(--muted);font-size:12px}
+html.game-mortalis .controls{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+  width:100%;
+  margin-top:0;
+}
+html.game-mortalis button, html.game-mortalis .btn{
+    background:var(--panel3); color:var(--text2);
+    border:1px solid; var(--line2); border-radius:15px;
+    padding:7px 9px; cursor:pointer; font-weight:500;
+    font-size: 12px;
+  }
+html.game-mortalis button.danger{
+    background:linear-gradient(180deg, rgba(140,48,62,1), rgb(56, 0, 0)); color:var(--text2);
+    border:1px solid; Border-color:#FC970D; border-radius:999px;text-shadow: #000000 2px 2px 4px;
+    padding:10px 12px; cursor:pointer; font-weight:700;
+    font-size: 12px;
+  }
+html.game-mortalis button:hover{background: #ffa200}
+html.game-mortalis button.danger:hover{background: #d30000}
+html.game-mortalis button.accent{border-color:var(--line2);font-size: 12px;font-weight: 700;text-shadow: #000000 2px 2px 4px; padding:10px 12px;border-radius:999px;}
+html.game-mortalis button.accent:hover{filter:brightness(1.06)}
+html.game-mortalis button.accent2{border-color:var(--line);font-size: 12px;font-weight: 700;text-shadow: #000000 2px 2px 4px; padding:10px 12px;border-radius:999px;background:linear-gradient(180deg, rgb(98, 98, 98), rgb(24, 24, 24));}
+html.game-mortalis button.accent2:hover{background: #ffa200}
+html.game-mortalis input[type="file"]{display:none}
+html.game-mortalis .pill{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 12px;border-radius:999px;border:1px solid var(--line);
+    background:linear-gradient(180deg, rgb(98, 98, 98), rgb(24, 24, 24));
+    color:var(--text); font-weight:700;
+    font-size: 12px;
+    cursor:pointer;
+    text-shadow: #000000 2px 2px 4px;
+  }
+html.game-mortalis .pill2{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 12px;border-radius:999px;border:1px solid var(--line);
+    background:rgba(17,24,35,.7);
+    color:var(--text); font-weight:700;
+    cursor:pointer;
+  }
+html.game-mortalis .pill:hover{background: #ffa200}
+html.game-mortalis #prebuiltTeamSelect{
+  border-radius:999px;
+  padding:10px 30px 10px 12px; 
+  background:linear-gradient(180deg, rgb(98, 98, 98), rgb(24, 24, 24));
+  color:var(--text);
+  font-weight:700;
+  border:1px solid var(--line);
+  cursor:pointer;
+  text-shadow: #000000 2px 2px 4px;
+
+  width: 220px;          
+  appearance: none;      
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center; 
+  background-size: 16px;
+}
+html.game-mortalis .statsRow{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0 14px}
+@media (min-width:900px){
+html.game-mortalis .statsRow{grid-template-columns:repeat(auto-fit, minmax(220px, 1fr))}
+}
+html.game-mortalis .statCard{
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; padding:12px 14px; min-height:92px;
+  }
+html.game-mortalis .statCard .label{color:var(--muted);font-size:12px}
+html.game-mortalis .statCard .value{font-size:22px;font-weight:900;margin-top:4px}
+html.game-mortalis .statCard .notice{color:var(--muted);font-size:12px;line-height:1.35;margin-top:6px}
+html.game-mortalis .rowInline{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+html.game-mortalis .field, html.game-mortalis select{
+    background:#0E2226;
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:8px 10px;
+    color:var(--text);
+    font-weight:800;
+    outline:none;
+  }
+html.game-mortalis select option{color:#0b0f14}
+html.game-mortalis .field{width:110px}
+html.game-mortalis .smallField{width:90px}
+html.game-mortalis .stepBtn{
+  width:40px;
+  height:40px;
+  border-radius:10px;
+  padding:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  line-height:1;
+}
+html.game-mortalis .grid{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:900px){
+html.game-mortalis .grid{grid-template-columns:1fr 1fr}
+}
+html.game-mortalis .fighter{
+    background:rgba(17,24,35,.8);
+    border:1px solid var(--line);
+    border-radius:16px; overflow:hidden;
+  }
+html.game-mortalis .fighterHead{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:10px;padding:12px 14px;background:linear-gradient(180deg, rgba(224,221,213,1), rgba(158,156,152,1));
+  }
+html.game-mortalis .fighterHead .left{display:flex;flex-direction:column;gap:2px;min-width:0}
+html.game-mortalis .fighterHead .name{color:#000000;font-weight:900;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:520px}
+html.game-mortalis .fighterHead .meta{color:#000000;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:520px}
+html.game-mortalis .fighterHead .right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:0 0 auto}
+html.game-mortalis .fighterHead .actionsRow{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+html.game-mortalis .costTag{
+    font-weight:900;
+    border:1px solid var(--line);
+    padding:6px 10px;
+    border-radius:999px;
+    background:#fff;
+    color:#000000
+  }
+html.game-mortalis details{border-top:1px solid var(--line)}
+html.game-mortalis details summary{list-style:none;cursor:pointer;padding:10px 14px;color:var(--muted);user-select:none}
+html.game-mortalis details summary::-webkit-details-marker{display:none}
+html.game-mortalis .body{padding:12px 14px;display:grid;gap:10px}
+html.game-mortalis .section{
+    background:rgba(17,24,35,.55);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:10px 12px
+  }
+html.game-mortalis .section h3{margin:0 0 6px;font-size:12px;letter-spacing:.4px;color:var(--muted);text-transform:uppercase}
+html.game-mortalis .row{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px dashed rgba(0,115,107,.55)}
+html.game-mortalis .row:last-child{border-bottom:none}
+html.game-mortalis .row .l{min-width:0}
+html.game-mortalis .row .l b{font-weight:900}
+html.game-mortalis .row .l .small{color:var(--muted);font-size:12px;margin-top:2px;line-height:1.25}
+html.game-mortalis .row .r{white-space:nowrap;font-weight:900}
+html.game-mortalis .kvs{display:flex;gap:10px;flex-wrap:wrap}
+html.game-mortalis .kv{
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:8px 10px;
+    background:rgba(17,24,35,.35)
+  }
+html.game-mortalis .kv .k{color:var(--muted);font-size:11px}
+html.game-mortalis .kv .v{font-size:14px;font-weight:900;margin-top:2px}
+html.game-mortalis .muted{color:var(--muted)}
+html.game-mortalis .notice{color:var(--muted);font-size:12px;line-height:1.35;margin-top:6px}
+html.game-mortalis .error{color:var(--danger);font-weight:800}
+html.game-mortalis .ok{color:var(--ok);font-weight:900}
+html.game-mortalis .toggle{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
+html.game-mortalis .toggle input{transform:scale(1.1)}
+</style>
+  <style>/* ===== WRATH & RUIN skin ===== */
+html.game-wr{
+    --bg:#0b0f14; --panel:linear-gradient(180deg, rgba(50,105,122,1), rgba(28,63,74,.5)); --panel2:#3D3D3D;--panel3: linear-gradient(180deg, rgba(0,133,123,1), rgba(0,0,0,1));
+    
+    --text:#e9f0ff;--text2:#fff; --muted:#E3E3E3;
+
+    
+    --line:#54968F;
+   --line2:#000000;
+    --accent:#42d3ff; --danger:#ff5c73; --ok:#66ffb3;
+  }
+html.game-wr *{box-sizing:border-box}
+html.game-wr body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:#1D2024;color:var(--text)}
+html.game-wr .wrap{max-width:960px;margin:0 auto;padding:18px}
+html.game-wr .topbar{
+  display:flex;
+  flex-direction:column;          
+  align-items:center;             
+  gap:6px;                        
+  margin-bottom:8px;              
+}
+html.game-wr .headerLogo{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+html.game-wr .headerLogo img{
+  height:150px;
+  width:499px;
+  object-fit:contain;
+  display:block;
+}
+html.game-wr .title{display:flex;flex-direction:column;gap:2px}
+html.game-wr .title h1{margin:0;font-size:25px;letter-spacing:.3px}
+html.game-wr .title .sub{color:var(--muted);font-size:12px}
+html.game-wr .controls{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+  width:100%;
+  margin-top:0;
+}
+html.game-wr button, html.game-wr .btn{
+    background:var(--panel3); color:var(--text2);
+    border:1px solid; var(--line2); border-radius:15px;
+    padding:7px 9px; cursor:pointer; font-weight:500;
+    font-size:11px;
+  }
+html.game-wr button.danger{
+    background:linear-gradient(180deg, rgba(140,48,62,1), rgb(56, 0, 0)); color:var(--text2);
+    border:1px solid; Border-color:#000000; border-radius:999px;text-shadow: #000000 2px 2px 4px;
+    padding:8px 8px; cursor:pointer; font-weight:700;
+    font-size:11px;
+  }
+html.game-wr button:hover{background: #7DB6B8}
+html.game-wr button.danger:hover{background: #d30000}
+html.game-wr button.accent{border-color:var(--line2);font-size:11px;font-weight: 700;text-shadow: #000000 2px 2px 4px; padding:8px 8px;border-radius:999px;}
+html.game-wr button.accent:hover{filter:brightness(1.06)}
+html.game-wr button.accent2{border-color:var(--line);font-size:11px;font-weight: 700;text-shadow: #000000 2px 2px 4px; padding:8px 8px;border-radius:999px;background:rgba(17,24,35,.7);}
+html.game-wr button.accent2:hover{background: #7DB6B8}
+html.game-wr input[type="file"]{display:none}
+html.game-wr .pill{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:9px 9px;border-radius:999px;border:1px solid var(--line);
+    background:rgba(17,24,35,.7);
+    color:var(--text); font-weight:700;
+    font-size:11px;
+    cursor:pointer;
+    text-shadow: #000000 2px 2px 4px;
+  }
+html.game-wr .pill2{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:8px 8px;border-radius:999px;border:1px solid var(--line);
+    background:rgba(17,24,35,.7);
+    color:var(--text); font-weight:700;
+    cursor:pointer;
+  }
+html.game-wr .pill:hover{background: #7DB6B8}
+html.game-wr #prebuiltTeamSelect{
+  border-radius:999px;
+  padding:10px 30px 10px 12px; 
+  background:rgba(17,24,35,.7);
+  color:var(--text);
+  font-weight:700;
+  border:1px solid var(--line);
+  cursor:pointer;
+  text-shadow: #000000 2px 2px 4px;
+
+  width: 220px;          
+  appearance: none;      
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center; 
+  background-size: 16px;
+}
+html.game-wr .statsRow{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0 14px}
+@media (min-width:900px){
+html.game-wr .statsRow{grid-template-columns:repeat(auto-fit, minmax(220px, 1fr))}
+}
+html.game-wr .statCard{
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; padding:12px 14px; min-height:92px;
+  }
+html.game-wr .statCard .label{color:var(--muted);font-size:12px}
+html.game-wr .statCard .value{font-size:22px;font-weight:900;margin-top:4px}
+html.game-wr .statCard .notice{color:var(--muted);font-size:11px;line-height:1.35;margin-top:6px}
+html.game-wr .rowInline{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+html.game-wr .field, html.game-wr select{
+    background:#0E2226;
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:8px 10px;
+    color:var(--text);
+    font-weight:800;
+    outline:none;
+  }
+html.game-wr select option{color:#0b0f14}
+html.game-wr .field{width:110px}
+html.game-wr .smallField{width:90px}
+html.game-wr .stepBtn{
+  width:40px;
+  height:40px;
+  border-radius:10px;
+  padding:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  line-height:1;
+}
+html.game-wr .grid{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:900px){
+html.game-wr .grid{grid-template-columns:1fr 1fr}
+}
+html.game-wr .fighter{
+    background:rgba(17,24,35,.8);
+    border:1px solid var(--line);
+    border-radius:16px; overflow:hidden;
+  }
+html.game-wr .fighterHead{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:10px;padding:12px 14px;background:linear-gradient(180deg, rgba(224,221,213,1), rgba(158,156,152,1));
+  }
+html.game-wr .fighterHead .left{display:flex;flex-direction:column;gap:2px;min-width:0}
+html.game-wr .fighterHead .name{color:#000000;font-weight:900;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:520px}
+html.game-wr .fighterHead .meta{color:#000000;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:520px}
+html.game-wr .fighterHead .right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:0 0 auto}
+html.game-wr .fighterHead .actionsRow{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+html.game-wr .costTag{
+    font-weight:900;
+    border:1px solid var(--line);
+    padding:6px 10px;
+    border-radius:999px;
+    background:#fff;
+    color:#000000
+  }
+html.game-wr details{border-top:1px solid var(--line)}
+html.game-wr details summary{list-style:none;cursor:pointer;padding:10px 14px;color:var(--muted);user-select:none}
+html.game-wr details summary::-webkit-details-marker{display:none}
+html.game-wr .body{padding:12px 14px;display:grid;gap:10px}
+html.game-wr .section{
+    background:rgba(17,24,35,.55);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:10px 12px
+  }
+html.game-wr .section h3{margin:0 0 6px;font-size:11px;letter-spacing:.4px;color:var(--muted);text-transform:uppercase}
+html.game-wr .row{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px dashed rgba(0,115,107,.55)}
+html.game-wr .row:last-child{border-bottom:none}
+html.game-wr .row .l{min-width:0}
+html.game-wr .row .l b{font-weight:900}
+html.game-wr .row .l .small{color:var(--muted);font-size:11px;margin-top:2px;line-height:1.25}
+html.game-wr .row .r{white-space:nowrap;font-weight:900}
+html.game-wr .kvs{display:flex;gap:10px;flex-wrap:wrap}
+html.game-wr .kv{
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:8px 10px;
+    background:rgba(17,24,35,.35)
+  }
+html.game-wr .kv .k{color:var(--muted);font-size:11px}
+html.game-wr .kv .v{font-size:14px;font-weight:900;margin-top:2px}
+html.game-wr .muted{color:var(--muted)}
+html.game-wr .notice{color:var(--muted);font-size:11px;line-height:1.35;margin-top:6px}
+html.game-wr .error{color:var(--danger);font-weight:800}
+html.game-wr .ok{color:var(--ok);font-weight:900}
+html.game-wr .toggle{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
+html.game-wr .toggle input{transform:scale(1.1)}
+html.game-wr{--wr-bg:#17191b;--wr-panel:#202326;--wr-ink:#e9dfcf;--wr-muted:#a9a39a;--wr-bronze:#786047;--wr-bright:#a58a64;--wr-red:#57151c;--wr-red-hover:#78232b;}
+html.game-wr body{background:var(--wr-bg)!important;color:var(--wr-ink)!important;}
+html.game-wr button, html.game-wr input, html.game-wr select, html.game-wr label{font-family:inherit;}
+html.game-wr button{transition:background-color .15s,border-color .15s;}
+html.game-wr input[type=checkbox]{accent-color:#8c3438;}
+html.game-wr input[type=text], html.game-wr input[type=number], html.game-wr select{color:var(--wr-ink);background:#141618;border-color:#67543e;}
+html.game-wr{--bg:#17191b;--panel:#202326;--panel2:#202326;--panel3:#57151c;--text:#e9dfcf;--text2:#f1e6d8;--muted:#aaa397;--line:#786047;--line2:#574536;--accent:#a58a64;--danger:#ba6969;--ok:#9dbb9c;}
+html.game-wr .wrap{color:var(--wr-ink);}
+html.game-wr .headerLogo{min-height:95px;margin:4px auto 12px;}
+html.game-wr .headerLogo img{display:none;}
+html.game-wr .headerLogo::before{content:'THE FIGHTER FORGE';font-family:'Cinzel',Georgia,serif;font-size:clamp(1.55rem,5vw,2.7rem);font-weight:700;letter-spacing:.045em;color:#e6d7bf;text-align:center;text-shadow:0 2px 0 #090a0a;display:block;border-bottom:1px solid #806549;padding:15px 18px 13px;}
+html.game-wr button, html.game-wr .btn, html.game-wr .pill, html.game-wr .pill2{background:#261c1d;color:#f1e6d8;border:1px solid #745b46;border-radius:4px;text-shadow:none;font-weight:600;}
+html.game-wr button.accent, html.game-wr button.danger{background:#57151c;color:#f3e6d7;border:1px solid #8b5047;border-radius:4px;text-shadow:none;}
+html.game-wr button.accent2{background:#25201e;color:#f3e6d7;border:1px solid #745b46;border-radius:4px;text-shadow:none;}
+html.game-wr button:hover, html.game-wr button.accent:hover, html.game-wr button.accent2:hover, html.game-wr .pill:hover{background:#78232b;color:#fff;}
+html.game-wr button.danger:hover{background:#902e35;}
+html.game-wr #prebuiltTeamSelect, html.game-wr .field, html.game-wr select{border-radius:4px;background-color:#181a1c;color:#e9dfcf;text-shadow:none;}
+html.game-wr .statCard, html.game-wr .fighter, html.game-wr .section, html.game-wr .kv{background:#202326;border:1px solid #66543f;border-radius:5px;}
+html.game-wr .statCard .label, html.game-wr .section h3, html.game-wr .kv .k{font-family:'Cinzel',Georgia,serif;color:#d9c4a5;letter-spacing:.02em;}
+html.game-wr .statCard .value, html.game-wr .kv .v{color:#eee2d0;}
+html.game-wr .fighterHead{background:#292526;border-bottom:1px solid #786047;}
+html.game-wr .fighterHead .name{font-family:'Cinzel',Georgia,serif;color:#e9d9bd;}
+html.game-wr .fighterHead .meta{color:#b7a998;}
+html.game-wr .costTag{background:#1b1c1e;color:#eadbc6;border:1px solid #786047;border-radius:4px;}
+html.game-wr .row{border-bottom-color:#494037;}
+html.game-wr .row .l b{color:#d8be94;}
+html.game-wr #warbandName{background:#161819!important;border-color:#786047!important;color:#f1e7d8!important;border-radius:4px!important;}
+@media(max-width:600px){
+html.game-wr .headerLogo{min-height:65px}
+html.game-wr .headerLogo::before{padding:10px 5px}
+}
+html.game-wr .wrap{font-family:Georgia,'Times New Roman',serif;}
+html.game-wr .wrap button, html.game-wr .wrap input, html.game-wr .wrap select, html.game-wr .wrap label, html.game-wr .wrap .pill, html.game-wr .wrap .pill2, html.game-wr .wrap .btn{font-family:Georgia,'Times New Roman',serif;}
+html.game-wr .wrap .headerLogo::before{font-family:'Cinzel',Georgia,serif;font-weight:800;}
+html.game-wr .wrap .title h1, html.game-wr .wrap .statCard .label, html.game-wr .wrap .section h3, html.game-wr .wrap .kv .k, html.game-wr .wrap .fighterHead .name{font-family:'Cinzel',Georgia,serif;font-weight:700;letter-spacing:.012em;}
+html.game-wr .wrap .fighterHead .meta, html.game-wr .wrap .row .small, html.game-wr .wrap .notice{font-family:Georgia,'Times New Roman',serif;}
+html.game-wr .wrap .headerLogo::before{font-weight:500;}
+html.game-wr .wrap .title h1, html.game-wr .wrap .statCard .label, html.game-wr .wrap .section h3, html.game-wr .wrap .kv .k, html.game-wr .wrap .fighterHead .name{font-weight:500;}
+html.game-wr .wrap{font-size:15px;line-height:1.45;}
+html.game-wr .wrap button, html.game-wr .wrap .btn, html.game-wr .wrap .pill, html.game-wr .wrap .pill2, html.game-wr .wrap select, html.game-wr .wrap .field{font-size:13px;line-height:1.3;}
+html.game-wr .wrap button, html.game-wr .wrap .btn, html.game-wr .wrap .pill, html.game-wr .wrap .pill2{padding:9px 11px;}
+html.game-wr .wrap .statCard .label, html.game-wr .wrap .section h3, html.game-wr .wrap .kv .k{font-size:13px;}
+html.game-wr .wrap .statCard .value{font-size:25px;}
+html.game-wr .wrap .kv .v{font-size:16px;}
+html.game-wr .wrap .statCard .notice, html.game-wr .wrap .notice, html.game-wr .wrap .row .l .small, html.game-wr .wrap .fighterHead .meta, html.game-wr .wrap .title .sub{font-size:13px;line-height:1.45;}
+html.game-wr .wrap .fighterHead .name{font-size:17px;}
+html.game-wr .wrap .row, html.game-wr .wrap details summary, html.game-wr .wrap .toggle{font-size:14px;}
+html.game-wr .wrap .row .r{font-size:14px;}
+html.game-wr .wrap .costTag{font-size:14px;}
+html.game-wr .wrap #prebuiltTeamSelect{width:235px;}
+html.game-wr .wrap .topbar .controls button, html.game-wr .wrap .topbar .controls .pill, html.game-wr .wrap .topbar .controls .pill2, html.game-wr .wrap .topbar .controls select{
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:.85rem;
+  font-weight:400;
+  line-height:normal;
+  letter-spacing:normal;
+}
+html.game-wr .wrap .topbar .controls button, html.game-wr .wrap .topbar .controls .pill, html.game-wr .wrap .topbar .controls .pill2{padding:.3rem .75rem;}
+html.game-wr body{background:#17191b!important;}
+html.game-wr .wrap .statCard, html.game-wr .wrap .fighter, html.game-wr .wrap .section{
+  background:linear-gradient(145deg,#1c2428 0%,#171e22 62%,#151b1f 100%);
+  border-color:#67523a;
+  box-shadow:inset 0 1px 2px rgba(192,165,120,.055),inset 0 -8px 20px rgba(0,0,0,.16);
+}
+html.game-wr .wrap .kv, html.game-wr .wrap .costTag, html.game-wr .wrap .field, html.game-wr .wrap #prebuiltTeamSelect, html.game-wr .wrap #warbandName{
+  background:linear-gradient(145deg,#161d21,#111619)!important;
+  border-color:#786047!important;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.45),inset 0 1px 0 rgba(199,174,132,.075);
+}
+html.game-wr .wrap .fighterHead{
+  background:linear-gradient(145deg,#2b191b 0%,#231619 62%,#1b1416 100%);
+  border-bottom:1px solid #876047;
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.42),inset 0 1px 0 rgba(171,109,89,.10);
+}
+html.game-wr .wrap .fighterHead .name{color:#e1c28f;}
+html.game-wr .wrap button, html.game-wr .wrap .btn, html.game-wr .wrap .pill, html.game-wr .wrap .pill2{
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.34);
+}
+html.game-wr .wrap button.accent, html.game-wr .wrap button.danger{
+  box-shadow:inset 0 1px 5px rgba(0,0,0,.28);
+}
+html.game-wr .wrap details summary{background:rgba(13,19,22,.35);}
+html.game-wr .wrap .headerLogo{ width:100%; min-height:0; margin:0 auto 0; padding:0; display:flex; justify-content:center; align-items:center; }
+html.game-wr .wrap .headerLogo::before{ content:none !important; display:none !important; }
+html.game-wr .wrap .headerLogo img{ display:block !important; width:min(75%, 637.5px); height:auto; max-width:100%; object-fit:contain; }
+@media(max-width:600px){
+html.game-wr .wrap .headerLogo{ margin-bottom:0; }
+}
+html.game-wr .wrap .topbar{ gap:0; margin-bottom:8px; }
+html.game-wr .wrap .topbar .controls{ margin-top:0; }
+html.game-wr .wrap .topbar .controls > button, html.game-wr .wrap .topbar .controls > label.pill, html.game-wr .wrap .topbar .controls > label.pill2, html.game-wr .wrap .topbar .controls > #prebuiltTeamSelect{
+  height:40px;
+  min-height:40px;
+  box-sizing:border-box;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:13px;
+  font-weight:400;
+  line-height:18px;
+  padding:10px 12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap;
+}
+html.game-wr .wrap .topbar .controls > #prebuiltTeamSelect{
+  display:block;
+  padding:9px 30px 9px 12px;
+  width:235px;
+  border-radius:4px;
+}
+</style>
+  <style>/* ===== Game chooser ===== */
+.b28-chooser{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:0 auto 12px;padding:8px 10px;border-radius:10px;font-size:.9rem}
+.b28-chooser-label{font-weight:600;margin-right:4px}
+.b28-game-btn{cursor:pointer;padding:.35rem .9rem;border-radius:999px;font-size:.9rem;font-weight:600;line-height:1.2}
+html.game-mortalis .b28-chooser{background:linear-gradient(0deg,rgba(35,41,43,1),rgba(0,0,0,1));border:1px solid #ff9f1c;color:#DFE4EB;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+html.game-mortalis .b28-game-btn{background:#101216;border:1px solid #374151;color:#e5e7eb}
+html.game-mortalis .b28-game-btn:hover{border-color:#ff9f1c}
+html.game-mortalis .b28-game-btn.active{background:linear-gradient(180deg,rgba(255,170,84,1),rgba(128,51,0,1));color:#fff;border-color:#101213}
+html.game-wr .b28-chooser{background:linear-gradient(145deg,#161d21,#111619);border:1px solid #786047;border-radius:5px;color:#e7d9c3;font-family:Georgia,"Times New Roman",serif}
+html.game-wr .b28-chooser-label{font-family:"Cinzel",Georgia,serif;font-weight:500}
+html.game-wr .b28-game-btn{background:#17191b;border:1px solid #695640;border-radius:4px;color:#dfd5c6;font-family:"Cinzel",Georgia,serif;font-weight:600}
+html.game-wr .b28-game-btn:hover{background:#34302d}
+html.game-wr .b28-game-btn.active{background:#57151c;color:#f4e5d7;border-color:#9a604f}
+/* First visit: full-screen "Choose Mortalis or Wrath & Ruin" */
+.b28-welcome{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(5,6,8,.92)}
+.b28-welcome-box{max-width:560px;width:100%;text-align:center;color:#eee;font-family:Georgia,"Times New Roman",serif}
+.b28-welcome-box h1{font-family:"Cinzel",Georgia,serif;font-weight:600;font-size:clamp(1.3rem,4.5vw,2rem);margin:0 0 6px;letter-spacing:.02em}
+.b28-welcome-box p{margin:0 0 18px;color:#bdb7ad}
+.b28-welcome-choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.b28-welcome-choices{grid-template-columns:1fr}}
+.b28-welcome-choice{cursor:pointer;border-radius:10px;padding:18px 12px;text-align:center;font-size:1.25rem;line-height:1.3}
+.b28-welcome-choice small{display:block;font-size:.8rem;opacity:.8;margin-top:4px}
+.b28-welcome-choice.mortalis{background:linear-gradient(180deg,rgba(255,170,84,1),rgba(128,51,0,1));border:1px solid #ff9f1c;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:700}
+.b28-welcome-choice.wr{background:#57151c;border:1px solid #9a604f;color:#f4e5d7;font-family:"Cinzel",Georgia,serif;font-weight:600}
+.b28-welcome-choice:hover{filter:brightness(1.15)}
+
+.wrap .b28-chooser{margin:0 auto 10px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+<div class="b28-chooser" role="group" aria-label="Choose your game">
+  <span class="b28-chooser-label">Choose your game:</span>
+  <button type="button" class="b28-game-btn" data-game="mortalis">Mortalis</button>
+  <button type="button" class="b28-game-btn" data-game="wr">Wrath &amp; Ruin</button>
+</div>
+<div class="topbar">
+  <div class="headerLogo">
+    <img id="b28Logo" src="" alt="Fighter Forge Logo"><script>document.getElementById("b28Logo").src = B28.asset("logo");</script>
+  </div>
+  <div class="controls">
+        <button class="accent" id="addFighterBtn">Build Fighter</button>
+        <button class="accent2" id="exportBtn" data-tpl="Export {team} (.json)">Export Team (.json)</button>
+         <label class="pill" for="fileInput">Load Fighters (.json)</label>
+        <input id="fileInput" type="file" multiple accept=".json,application/json" />
+        <label class="pill" for="teamInput" data-tpl="Load {team} (.json)">Load Team (.json)</label>
+        <input id="teamInput" type="file" accept=".json,application/json" />
+        <select id="prebuiltTeamSelect" title="Load a prebuilt team">
+          <option value="">Load Prebuilt Team...</option>
+        </select>
+        <button class="danger" id="clearBtn" data-tpl="Clear {team}">Clear Team</button>
+      </div>
+    </div>
+
+    <div class="statsRow">
+
+      <div class="statCard">
+        <div class="label" data-tpl="{team} Name">Team Name</div>
+        <div class="rowInline" style="margin-top:10px">
+          <input id="warbandName" type="text"
+                 placeholder="e.g. The Ashen Corsairs"
+                 style="width:100%;min-width:0;background:#0E2226;border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--text);font-weight:900" />
+        </div>
+        <div class="notice">Saved in this browser and included in <span data-t="teamLower">team</span> export.</div>
+      </div>
+      <div class="statCard">
+        <div class="label">Fighters</div>
+        <div class="value" id="fighterCount">0</div>
+        <div class="notice">Batch-load multiple files at once.</div>
+      </div>
+
+      <div class="statCard">
+        <div class="label" data-tpl="{team} Total Points">Team Total Points</div>
+        <div class="value" id="teamTotal">0</div>
+        <div class="notice" id="limitNotice"></div>
+      </div>
+
+      <div class="statCard">
+  <div class="label">Points Limit</div>
+  <div class="rowInline" style="margin-top:10px">
+    <input id="limitInput" class="field" type="number" min="0" step="1" value="400" title="0 disables limit"/>
+    </div>
+</div>
+
+    </div>
+
+    <div id="status" class="notice"></div>
+    <div class="grid" id="list"></div>
+  </div>
+
+<script>
+(() => {
+  // Team entries: { id, sourceFileName, data }
+  let team = [];
+
+  const el = (id) => document.getElementById(id);
+  const listEl = el("list");
+  const statusEl = el("status");
+  const teamTotalEl = el("teamTotal");
+  const fighterCountEl = el("fighterCount");
+  const limitInput = el("limitInput");
+  const limitNotice = el("limitNotice");
+  const warbandNameEl = el("warbandName");
+
+  const WARBAND_KEY = (B28.gameKey === "mortalis") ? "dr_mortalis_teambuilder_warband_name_v1" : "wr_teambuilder_warband_name_v1";
+
+  const fileInput = el("fileInput");
+  const teamInput = el("teamInput");
+  const exportBtn = el("exportBtn");
+  const clearBtn = el("clearBtn");
+  const prebuiltTeamSelect = el("prebuiltTeamSelect");
+
+
+  const addFighterBtn = el("addFighterBtn");
+
+  // ---- Prebuilt team dropdown ----
+  // Put your exported team JSON files in a /teams/ folder next to this HTML file,
+  // then edit/add entries below. Example URL: teams/ashen-corsairs.json
+  const PREBUILT_TEAMS = B28.game.prebuilt;
+
+  // ---- Current Mortalis rules library (mirrors builder data for roster recalculation) ----
+  var STAT_CONFIG = [
+        { key: "move",  label: "Move",  unit: '"', base: 6, min: 5, max: 8,  upCost: 4, downCost: 4, lowerIsBetter: false },
+        { key: "def",   label: "DEF",   unit: "+", base: 9, min: 5, max: 11, upCost: 1, downCost: 1, lowerIsBetter: true  },
+        { key: "ap",    label: "AP",    unit: "",  base: 2, min: 2, max: 3,  upCost: 7, downCost: 7, lowerIsBetter: false },
+        { key: "hp",    label: "HP",    unit: "",  base: 7, min: 3, max: 99, upCost: 1, downCost: 1, lowerIsBetter: false },
+        { key: "atk",   label: "ATK",   unit: "",  base: 3, min: 3, max: 5,  upCost: 2, downCost: 0, lowerIsBetter: false },
+        { key: "fight", label: "Fight", unit: "+", base: 7, min: 5, max: 11, upCost: 2, downCost: 1, lowerIsBetter: true  },
+        { key: "shoot", label: "Shoot", unit: "+", base: 7, min: 5, max: 11, upCost: 2, downCost: 1, lowerIsBetter: true  }
+      ];
+
+  const B28_LISTS = B28.lists();
+  var CC_WEAPONS = B28_LISTS.CC_WEAPONS;
+
+  var RANGED_WEAPONS = B28_LISTS.RANGED_WEAPONS;
+
+  var RANGED_CATEGORIES = B28_LISTS.RANGED_CATEGORIES;
+
+  var FIGHTER_ABILITIES = B28_LISTS.FIGHTER_ABILITIES;
+
+  var LEADER_ABILITIES = B28_LISTS.LEADER_ABILITIES;
+
+  var SPELLS = B28_LISTS.SPELLS;
+
+  var EQUIPMENT = B28_LISTS.EQUIPMENT;
+
+  function deepClone(obj) {
+    try { return JSON.parse(JSON.stringify(obj)); }
+    catch (e) { return null; }
+  }
+
+  function normalizeUpgrades(upgrades) {
+    return {
+      poison: !!(upgrades && upgrades.poison),
+      enchanted: !!(upgrades && upgrades.enchanted),
+      cursed: !!(upgrades && upgrades.cursed),
+      truestrike: !!(upgrades && upgrades.truestrike),
+      masterCrafted: !!(upgrades && upgrades.masterCrafted),
+      boost: false /* Boost (1) upgrade removed */
+    };
+  }
+
+  function findCurrentItem(srcArray, importedItem) {
+    if (!Array.isArray(srcArray) || !importedItem) return null;
+    let impId = (importedItem.id != null) ? String(importedItem.id) : "";
+    let impName = (importedItem.name != null) ? String(importedItem.name) : "";
+    // Legacy: Extremely Resilient was merged into Resilient.
+    if (impId === "extremelyResilient") impId = "resilient";
+    if (impName === "Extremely Resilient") impName = "Resilient";
+
+    if (impId) {
+      for (const it of srcArray) {
+        if (String(it.id) === impId) return it;
+      }
+    }
+    if (impName) {
+      for (const it of srcArray) {
+        if (String(it.name) === impName) return it;
+      }
+    }
+    return null;
+  }
+
+  function rebindWeaponList(importedList, srcArray) {
+    if (!Array.isArray(importedList)) return [];
+    const out = [];
+    for (const item of importedList) {
+      if (!item || typeof item !== "object") continue;
+      const current = findCurrentItem(srcArray, item);
+      if (current) {
+        const rebound = {
+          id: current.id,
+          name: current.name,
+          baseProfile: current.profile,
+          profile: current.profile,
+          basePoints: current.points,
+          points: current.points,
+          upgrades: normalizeUpgrades(item.upgrades)
+        };
+        if (item.displayNameOverride != null && String(item.displayNameOverride).trim()) {
+          rebound.displayNameOverride = String(item.displayNameOverride);
+        }
+        out.push(rebound);
+      } else {
+        const fallback = {
+          id: item.id,
+          name: item.name || "Unknown",
+          baseProfile: item.baseProfile || item.profile || "",
+          profile: item.baseProfile || item.profile || "",
+          basePoints: (item.basePoints != null ? item.basePoints : (item.points || 0)),
+          points: (item.basePoints != null ? item.basePoints : (item.points || 0)),
+          upgrades: normalizeUpgrades(item.upgrades)
+        };
+        if (item.displayNameOverride != null && String(item.displayNameOverride).trim()) {
+          fallback.displayNameOverride = String(item.displayNameOverride);
+        }
+        out.push(fallback);
+      }
+    }
+    return out;
+  }
+
+  function rebindSimpleList(importedList, srcArray, isSpell) {
+    if (!Array.isArray(importedList)) return [];
+    const out = [];
+    for (const item of importedList) {
+      if (!item || typeof item !== "object") continue;
+      const current = findCurrentItem(srcArray, item);
+      if (current) {
+        const rebound = {
+          id: current.id,
+          name: current.name,
+          points: (isSpell ? 0 : (current.points || 0)),
+          profile: current.profile,
+          effect: current.effect,
+          dynamicType: current.dynamicType,
+          dynamicFactor: current.dynamicFactor,
+          dynamicMin: current.dynamicMin,
+          cv: current.cv,
+          category: current.category || item.category
+        };
+        if (item.displayNameOverride != null && String(item.displayNameOverride).trim()) {
+          rebound.displayNameOverride = String(item.displayNameOverride);
+        }
+        out.push(rebound);
+      } else {
+        const fallback = {
+          id: item.id,
+          name: item.name || "Unknown",
+          points: (isSpell ? 0 : (item.points || 0)),
+          profile: item.profile,
+          effect: item.effect,
+          dynamicType: item.dynamicType,
+          dynamicFactor: item.dynamicFactor,
+          cv: item.cv,
+          category: item.category
+        };
+        if (item.displayNameOverride != null && String(item.displayNameOverride).trim()) {
+          fallback.displayNameOverride = String(item.displayNameOverride);
+        }
+        out.push(fallback);
+      }
+    }
+    return out;
+  }
+
+  function computeWeaponUpgradeCostFor(weapon) {
+    if (!weapon || !weapon.upgrades) return 0;
+    let count = 0;
+    if (weapon.upgrades.poison) count++;
+    if (weapon.upgrades.enchanted) count++;
+    if (weapon.upgrades.cursed) count++;
+    if (weapon.upgrades.truestrike) count++;
+    if (weapon.upgrades.masterCrafted) count++;
+    if (count === 0) return 0;
+    return 2 + (count - 1) * 4;
+  }
+
+
+  // ===== Nov 2026 rules: toughness pricing, ability rules, legacy migration =====
+  // Toughness: HP and DEF priced together = round(HP x DEF multiplier) - 7.
+  var DEF_MULT = { 5: 1.47, 6: 1.33, 7: 1.20, 8: 1.10, 9: 1.00, 10: 0.92, 11: 0.84 };
+  function toughnessCost (hp, def) {
+    var m = DEF_MULT[def];
+    if (m == null) m = 1;
+    return Math.round((hp || 0) * m) - 7;
+  }
+  // Abilities that cannot be taken together.
+  var ABILITY_EXCLUSIONS = [
+    ["reanimation", "endlessHorde"],
+    ["patientandReactive", "hyperAggressive"]
+  ];
+  function abilityNameById (id) {
+    for (var i = 0; i < FIGHTER_ABILITIES.length; i++) if (FIGHTER_ABILITIES[i].id === id) return FIGHTER_ABILITIES[i].name;
+    return id;
+  }
+  function abilityConflictMessage (newId, list) {
+    for (var i = 0; i < ABILITY_EXCLUSIONS.length; i++) {
+      var pair = ABILITY_EXCLUSIONS[i], other = null;
+      if (pair[0] === newId) other = pair[1]; else if (pair[1] === newId) other = pair[0];
+      if (!other) continue;
+      for (var j = 0; j < (list || []).length; j++) {
+        if (list[j] && list[j].id === other) {
+          return abilityNameById(newId) + " cannot be combined with " + abilityNameById(other) + ".";
+        }
+      }
+    }
+    return null;
+  }
+  // Ranged weapons that may be fired twice (Pistols/Grenades and Light/Medium).
+  function isDoubleShotWeaponId (id) {
+    for (var i = 0; i < RANGED_CATEGORIES.length; i++) {
+      var c = RANGED_CATEGORIES[i];
+      if ((c.key === "pistols" || c.key === "light") && c.ids.indexOf(id) !== -1) return true;
+    }
+    return false;
+  }
+  // Clamp stats to current limits (e.g. old 4 AP Fighters load as 3 AP).
+  function clampStatsToLimits (stats) {
+    if (!stats) return;
+    for (var i = 0; i < STAT_CONFIG.length; i++) {
+      var c = STAT_CONFIG[i], v = stats[c.key];
+      if (typeof v !== "number") continue;
+      if (v > c.max) stats[c.key] = c.max;
+      if (v < c.min) stats[c.key] = c.min;
+    }
+  }
+  // Old "Hyper Aggressive" (shoot OR fight twice): Fighters without a Pistol/Light/Medium
+  // ranged weapon could only use the melee half, so they become "Aggressive".
+  var LEGACY_ABILITY_NAMES = { hyperAggressive: ["Hyper Aggressive"] };
+  function migrateLegacyAbilities (imp) {
+    if (!imp || !Array.isArray(imp.abilities)) return;
+    var eligible = false, rw = imp.rangedWeapons || [];
+    for (var i = 0; i < rw.length; i++) if (rw[i] && isDoubleShotWeaponId(rw[i].id)) eligible = true;
+    for (var k = 0; k < imp.abilities.length; k++) {
+      var ab = imp.abilities[k];
+      if (!ab) continue;
+      var legacy = (ab.id === "hyperAggressive" || ab.name === "Hyper Aggressive") &&
+                   (ab.name == null || ab.name === "Hyper Aggressive");
+      if (legacy) {
+        if (!eligible) { ab.id = "aggressive"; ab.name = "Aggressive"; }
+        else { ab.id = "hyperAggressive"; ab.name = "Sustained Fire"; }
+      }
+    }
+  }
+  function isLegacyNameFor (id, name) {
+    var l = LEGACY_ABILITY_NAMES[id];
+    return !!(l && l.indexOf(name) !== -1);
+  }
+  // Dynamic costs that depend on weapons / the whole Fighter.
+  // Gunslinger costs the same as the Fighter's most expensive Pistol (Pistols/Grenades category)
+  function maxPistolWeaponCost (f) {
+    var cat = null, m = 0, rw = (f && f.rangedWeapons) || [];
+    for (var ci = 0; ci < RANGED_CATEGORIES.length; ci++) if (RANGED_CATEGORIES[ci].key === "pistols") cat = RANGED_CATEGORIES[ci];
+    for (var i = 0; i < rw.length; i++) {
+      if (!rw[i] || !cat || cat.ids.indexOf(rw[i].id) === -1) continue;
+      var p = Number(rw[i].points) || 0;
+      if (p > m) m = p;
+    }
+    return m;
+  }
+  function maxRangedWeaponCost (f) {
+    var m = 0, rw = f.rangedWeapons || [];
+    for (var i = 0; i < rw.length; i++) {
+      var p = (typeof rw[i].points === "number") ? rw[i].points : 0;
+      if (p > m) m = p;
+    }
+    return m;
+  }
+  function applyPercentTotalAbilities (f) {
+    // Total cost excluding the percentTotal abilities themselves.
+    var p = f.points || {}, i;
+    var pctSum = 0;
+    for (i = 0; i < (f.abilities || []).length; i++) {
+      if (f.abilities[i].dynamicType === "percentTotal" && typeof f.abilities[i].points === "number") pctSum += f.abilities[i].points;
+    }
+    var others = (p.base || 0) + (p.stats || 0) + (p.warlock || 0) + (p.ccWeapons || 0) +
+                 (p.rangedWeapons || 0) + (p.abilities || 0) - pctSum + (p.leaderAbilities || 0) +
+                 (p.spells || 0) + (p.equipment || 0);
+    var add = 0;
+    for (i = 0; i < (f.abilities || []).length; i++) {
+      var ab = f.abilities[i];
+      if (ab.dynamicType !== "percentTotal") continue;
+      var c = Math.ceil(others * (ab.dynamicFactor || 0));
+      if (ab.dynamicMin != null && c < ab.dynamicMin) c = ab.dynamicMin;
+      ab.points = c;
+      add += c;
+    }
+    p.abilities = (p.abilities || 0) - pctSum + add;
+  }
+
+  function recalcStatCostFor(f) {
+    let total = 0;
+    for (const cfg of STAT_CONFIG) {
+      if (cfg.key === "hp" || cfg.key === "def") continue; // priced together below
+      const base = cfg.base;
+      const cur = f?.stats?.[cfg.key];
+      if (cur === base) continue;
+      const step = (cur > base) ? 1 : -1;
+      const lowerIsBetter = !!cfg.lowerIsBetter;
+
+      for (let v = base; v !== cur; v += step) {
+        const next = v + step;
+        const improving = lowerIsBetter ? (next < v) : (next > v);
+        if (improving) total += cfg.upCost || 0;
+        else total -= cfg.downCost || 0;
+      }
+    }
+    total += toughnessCost(f?.stats?.hp, f?.stats?.def);
+    f.points.stats = total;
+  }
+
+  function recalcWarlockCostFor(f) {
+    if (f.isMasterWarlock) f.points.warlock = 14;
+    else if (f.isWarlock) f.points.warlock = 8;
+    else f.points.warlock = 0;
+  }
+
+  function recalcWeaponPointsFor(f) {
+    let sumCC = 0;
+    let sumR = 0;
+
+    for (const wc of (f.ccWeapons || [])) {
+      const base = (wc.basePoints != null) ? wc.basePoints : (wc.points || 0);
+      wc.points = base + computeWeaponUpgradeCostFor(wc);
+      sumCC += wc.points;
+    }
+
+    for (const rw of (f.rangedWeapons || [])) {
+      const baseR = (rw.basePoints != null) ? rw.basePoints : (rw.points || 0);
+      rw.points = baseR + computeWeaponUpgradeCostFor(rw);
+      sumR += rw.points;
+    }
+
+    f.points.ccWeapons = sumCC;
+    f.points.rangedWeapons = sumR;
+  }
+
+  function recalcAbilityPointsFor(f) {
+    let sumA = 0, sumL = 0, sumS = 0, sumE = 0;
+
+    for (const ab of (f.abilities || [])) {
+      let p = 0;
+      if (ab.dynamicType === "percentHp") {
+        const hp = f?.stats?.hp || 0;
+        const factor = ab.dynamicFactor || 0;
+        p = Math.ceil(hp * factor);
+        ab.points = p;
+      } else if (ab.dynamicType === "hpStat") {
+        const hp2 = f?.stats?.hp || 0;
+        const factor2 = (ab.dynamicFactor != null) ? ab.dynamicFactor : 1;
+        p = Math.round(hp2 * factor2);
+        ab.points = p;
+      } else if (ab.dynamicType === "apScaled") {
+        p = (ab.dynamicFactor || 0) + 6 * Math.max(0, (f?.stats?.ap || 2) - 2);
+        ab.points = p;
+      } else if (ab.dynamicType === "maxRanged") {
+        p = maxRangedWeaponCost(f);
+        ab.points = p;
+          } else if (ab.dynamicType === "maxPistol") {
+            p = maxPistolWeaponCost(f);
+            ab.points = p;
+      } else if (ab.dynamicType === "percentTotal") {
+        p = (typeof ab.points === "number") ? ab.points : 0;
+      } else {
+        p = ab.points || 0;
+      }
+      sumA += p;
+    }
+
+    for (const la of (f.leaderAbilities || [])) sumL += la.points || 0;
+    for (const sp of (f.spells || [])) sumS += sp.points || 0;
+
+    let baseline = (f.points.base || 0) + (f.points.stats || 0);
+    if (baseline < 0) baseline = 0;
+
+    for (const eq of (f.equipment || [])) {
+      let ep = 0;
+      if (eq.dynamicType === "percentStats") {
+        const factorEq = eq.dynamicFactor || 0;
+        ep = Math.ceil(baseline * factorEq);
+        eq.points = ep;
+      } else {
+        ep = eq.points || 0;
+      }
+      sumE += ep;
+    }
+
+    f.points.abilities = sumA;
+    f.points.leaderAbilities = sumL;
+    f.points.spells = sumS;
+    f.points.equipment = sumE;
+    applyPercentTotalAbilities(f);
+  }
+
+  function normalizeImportedFighter(f) {
+    if (!f || typeof f !== "object") return f;
+    f = deepClone(f) || f;
+    migrateLegacyAbilities(f);
+
+    const normalized = {
+      name: f.name || "",
+      isWarlock: !!f.isWarlock,
+      isMasterWarlock: !!f.isMasterWarlock,
+      portraitDataUrl: (typeof f.portraitDataUrl === "string") ? f.portraitDataUrl : "",
+      portraitKey: (typeof f.portraitKey === "string") ? f.portraitKey : "",
+      stats: (function(){ const s = Object.assign({}, f.stats || {}); clampStatsToLimits(s); return s; })(),
+      ccWeapons: rebindWeaponList(f.ccWeapons, CC_WEAPONS),
+      rangedWeapons: rebindWeaponList(f.rangedWeapons, RANGED_WEAPONS),
+      abilities: rebindSimpleList(f.abilities, FIGHTER_ABILITIES, false),
+      leaderAbilities: rebindSimpleList(f.leaderAbilities, LEADER_ABILITIES, false),
+      spells: rebindSimpleList(f.spells, SPELLS, true),
+      equipment: rebindSimpleList(f.equipment, EQUIPMENT, false),
+      points: {}
+    };
+
+    const importedPoints = (f.points && typeof f.points === "object") ? f.points : {};
+    normalized.points.base = (typeof importedPoints.base === "number") ? importedPoints.base : 16;
+
+    recalcStatCostFor(normalized);
+    recalcWarlockCostFor(normalized);
+    recalcWeaponPointsFor(normalized);
+    recalcAbilityPointsFor(normalized);
+
+    return normalized;
+  }
+
+  function normalizePayloadWithCurrentRules(payload) {
+    if (!payload || typeof payload !== "object") return payload;
+    const cloned = deepClone(payload) || payload;
+    if (cloned.fighter && typeof cloned.fighter === "object") {
+      cloned.fighter = normalizeImportedFighter(cloned.fighter);
+      return cloned;
+    }
+    return { fighter: normalizeImportedFighter(cloned) };
+  }
+
+
+  // ---- Roster <-> Fighter Builder bridge (localStorage) ----
+  const TEAM_KEY = B28.game.storagePrefix + "_roster_team_state_v1";
+  const EDIT_KEY = B28.game.storagePrefix + "_roster_edit_ctx_v1";
+
+  // Change this filename to match where you place the Fighter Builder.
+  const FIGHTER_BUILDER_URL = "fighter_forge.html?game=" + B28.gameKey;
+
+  // ---- IndexedDB Portrait Store (avoids localStorage quota) ----
+  const PORTRAIT_DB_NAME = "warband_portraits_v1";
+  const PORTRAIT_STORE   = "portraits";
+
+  function openPortraitDB(){
+    return new Promise((resolve, reject) => {
+      try{
+        const req = indexedDB.open(PORTRAIT_DB_NAME, 1);
+        req.onupgradeneeded = () => {
+          const db = req.result;
+          if (!db.objectStoreNames.contains(PORTRAIT_STORE)) db.createObjectStore(PORTRAIT_STORE);
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      }catch(err){ reject(err); }
+    });
+  }
+  async function portraitDBSet(key, dataUrl){
+    if (!key) return;
+    const db = await openPortraitDB();
+    return await new Promise((resolve, reject) => {
+      const tx = db.transaction(PORTRAIT_STORE, "readwrite");
+      tx.objectStore(PORTRAIT_STORE).put(String(dataUrl || ""), String(key));
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+  async function portraitDBGet(key){
+    if (!key) return "";
+    const db = await openPortraitDB();
+    return await new Promise((resolve, reject) => {
+      const tx = db.transaction(PORTRAIT_STORE, "readonly");
+      const req = tx.objectStore(PORTRAIT_STORE).get(String(key));
+      req.onsuccess = () => resolve(String(req.result || ""));
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function ensurePortraitStoredOnFighter(fighter, fallbackKey){
+    try{
+      if (!fighter || typeof fighter !== "object") return;
+      const dataUrl = (typeof fighter.portraitDataUrl === "string") ? fighter.portraitDataUrl.trim() : "";
+      if (!dataUrl) return;
+      const key = (fighter.portraitKey && String(fighter.portraitKey).trim()) ? String(fighter.portraitKey).trim() : String(fallbackKey || "");
+      const finalKey = key || ("p_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16));
+      await portraitDBSet(finalKey, dataUrl);
+      fighter.portraitKey = finalKey;
+      fighter.portraitDataUrl = ""; // keep roster lean
+    }catch(_){}
+  }
+
+  async function attachPortraitForExport(fighter){
+    try{
+      if (!fighter || typeof fighter !== "object") return;
+      const has = (typeof fighter.portraitDataUrl === "string") ? fighter.portraitDataUrl.trim() : "";
+      if (has) return;
+      const key = (fighter.portraitKey && String(fighter.portraitKey).trim()) ? String(fighter.portraitKey).trim() : "";
+      if (!key) return;
+      const dataUrl = await portraitDBGet(key);
+      if (dataUrl) fighter.portraitDataUrl = dataUrl;
+    }catch(_){}
+  }
+
+
+    function saveTeamStateToBrowser(){
+    // Store a lean team state in localStorage (no portrait bytes).
+    // Portraits live in IndexedDB under fighter.portraitKey.
+    function buildPayload(){
+      return {
+        version: 1,
+        savedAt: new Date().toISOString(),
+        warbandName: (warbandNameEl?.value || "").trim(),
+        limit: safeNumber(limitInput.value),
+        [B28.game.rosterKey]: team.map(entry=>{
+          const cloned = JSON.parse(JSON.stringify(entry));
+          if (cloned?.data?.fighter){
+            cloned.data.fighter.portraitDataUrl = "";
+          }
+          return cloned;
+        })
+      };
+    }
+    try{
+      localStorage.setItem(TEAM_KEY, JSON.stringify(buildPayload()));
+    }catch(e){
+      // If even a lean payload fails (should be rare), do nothing rather than corrupting state.
+    }
+  }
+
+  function loadTeamStateFromBrowser(){
+    try{
+      const raw = localStorage.getItem(TEAM_KEY);
+      if (!raw) return false;
+      const obj = JSON.parse(raw);
+      const rk = B28.game.rosterKey;
+      if (obj && typeof obj === "object" && !Array.isArray(obj[rk]) && Array.isArray(obj.team || obj.warband)) obj[rk] = obj.team || obj.warband;
+      if (!obj || typeof obj !== "object" || !Array.isArray(obj[rk])) return false;
+
+      // restore team and normalize fighters against current Mortalis rules
+      team = obj[rk].map(entry => {
+        if (!entry || typeof entry !== "object") return entry;
+        const cloned = deepClone(entry) || entry;
+        if (cloned.data) cloned.data = normalizePayloadWithCurrentRules(cloned.data);
+        return cloned;
+      });
+
+      // restore warband name / limit
+      if (typeof obj.warbandName === "string" && warbandNameEl){
+        warbandNameEl.value = obj.warbandName;
+        saveWarbandName(obj.warbandName);
+      }
+      if (typeof obj.limit === "number") limitInput.value = String(Math.max(0, obj.limit));
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+
+  async function migrateExistingPortraitsToIndexedDB(){
+    // If an older version stored portraitDataUrl inside roster entries, move them into IndexedDB once.
+    try{
+      for (const entry of (team || [])){
+        await ensurePortraitStoredOnFighter(entry?.data?.fighter, entry?.id);
+      }
+    }catch(_){}
+  }
+
+  function getReturnUrl(){
+    // Keep it simple: return to the current file without query/hash.
+    const href = (window.location && window.location.href) ? window.location.href : "";
+    return href.replace(/[#?].*$/, "") + "?game=" + B28.gameKey;
+  }
+
+  function openFighterBuilder(mode, entryId){
+    try{
+      // persist current roster first
+      saveTeamStateToBrowser();
+
+      const ctx = {
+        version: 1,
+        mode: mode || (entryId ? "edit" : "new"),
+        entryId: entryId || null,
+        returnUrl: getReturnUrl(),
+        startedAt: new Date().toISOString()
+      };
+      localStorage.setItem(EDIT_KEY, JSON.stringify(ctx));
+    }catch(e){}
+
+    // navigate to fighter builder
+    window.location.href = FIGHTER_BUILDER_URL;
+  }
+
+  function startEditFighter(entryId){
+    openFighterBuilder(entryId ? "edit" : "new", entryId || null);
+  }
+
+  function startGenerateCard(entryId){
+    if (!entryId) return;
+    openFighterBuilder("card", entryId);
+  }
+
+
+  function uid() {
+    return "f_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
+  }
+  function safeNumber(n) {
+    return Number.isFinite(+n) ? +n : 0;
+  }
+  function fmtPts(n) {
+    return `${safeNumber(n)} pts`;
+  }
+  function escapeHtml(s) {
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+
+  // ---- Warband Name ----
+  function loadWarbandName() {
+    try { return localStorage.getItem(WARBAND_KEY) || ""; }
+    catch { return ""; }
+  }
+  function saveWarbandName(name) {
+    try { localStorage.setItem(WARBAND_KEY, String(name || "")); }
+    catch {}
+  }
+
+  // ---- Fighter calculations & rendering ----
+  function calcFighterTotal(f) {
+    const p = f?.points;
+    if (!p || typeof p !== "object") return 0;
+    return Object.values(p).reduce((sum, v) => sum + safeNumber(v), 0);
+  }
+  function teamTotal() {
+    return team.reduce((sum, entry) => sum + calcFighterTotal(entry.data.fighter), 0);
+  }
+
+  function detectGameApp(obj) {
+    const app = (obj?.app || "").toLowerCase();
+    if (app.includes("mortalis")) return "Mortalis";
+    if (app.includes("dark realms")) return "Dark Realms";
+    return obj?.app ? String(obj.app) : "Unknown";
+  }
+
+  function validateFighterJson(obj) {
+    if (!obj || typeof obj !== "object") return "Not an object.";
+    if (!obj.fighter || typeof obj.fighter !== "object") return "Missing 'fighter' object.";
+    if (typeof obj.fighter.name !== "string") return "Missing fighter.name.";
+    if (!obj.fighter.stats || typeof obj.fighter.stats !== "object") return "Missing fighter.stats.";
+    if (!obj.fighter.points || typeof obj.fighter.points !== "object") return "Missing fighter.points breakdown.";
+    return null;
+  }
+
+  function weaponUpgradesText(w) {
+    const ups = w?.upgrades;
+    if (!ups || typeof ups !== "object") return "";
+    const on = Object.entries(ups).filter(([,v]) => !!v).map(([k]) => k);
+    if (!on.length) return "";
+    return "Upgrades: " + on.join(", ");
+  }
+
+  function render() {
+    const total = teamTotal();
+    const count = team.length;
+    fighterCountEl.textContent = count;
+    teamTotalEl.textContent = total;
+
+    const limit = safeNumber(limitInput.value);
+    if (limit > 0) {
+      const remaining = limit - total;
+      limitNotice.innerHTML = remaining < 0
+        ? `<span class="error">Over by ${Math.abs(remaining)} pts</span>`
+        : `<span class="ok">Remaining: ${remaining} pts</span>`;
+    } else {
+      limitNotice.textContent = "Limit disabled (0).";
+    }
+
+    // Rules checks
+    const issues = [];
+    let sfCount = 0;
+    for (const entry of team) {
+      const fx = entry?.data?.fighter;
+      if (!fx) continue;
+      const abs = fx.abilities || [];
+      sfCount += abs.filter(a => a && a.id === "hyperAggressive").length;
+      for (const a of abs) {
+        const msg = a && abilityConflictMessage(a.id, abs.filter(b => b !== a));
+        if (msg && !issues.includes((fx.name || "Unnamed") + ": " + msg)) issues.push((fx.name || "Unnamed") + ": " + msg);
+      }
+    }
+    const sfMax = Math.floor(count / 3);
+    if (sfCount > sfMax) issues.push(`Sustained Fire: ${sfCount} taken, max ${sfMax} for ${count} Fighters (1 per 3).`);
+    if (issues.length) {
+      limitNotice.innerHTML += issues.map(m => `<br><span class="error">${escapeHtml(m)}</span>`).join("");
+    }
+
+    if (count === 0) {
+      listEl.innerHTML = `
+        <div class="fighter" style="grid-column:1/-1">
+          <div class="fighterHead">
+            <div class="left">
+              <div class="name">No fighters loaded</div>
+              <div class="meta">Use “Load Fighter JSON(s)” above.</div>
+            </div>
+          </div>
+        </div>`;
+      return;
+    }
+
+    const listItems = (arr, label, renderItem) => {
+      if (!Array.isArray(arr) || arr.length === 0) {
+        return `<div class="section"><h3>${label}</h3><div class="muted">None</div></div>`;
+      }
+      return `<div class="section"><h3>${label}</h3>${arr.map(renderItem).join("")}</div>`;
+    };
+
+    const weaponItem = (w) => {
+      const profile = w?.profile ?? w?.baseProfile ?? "";
+      const basePts = (w?.basePoints != null) ? `Base: ${safeNumber(w.basePoints)} pts` : "";
+      const upTxt = weaponUpgradesText(w);
+      const smallLines = [profile, basePts, upTxt].filter(Boolean).map(x => `<div class="small">${escapeHtml(x)}</div>`).join("");
+      return `
+        <div class="row">
+          <div class="l">
+            <b>${escapeHtml(w?.name ?? "Unnamed")}</b>
+            ${smallLines}
+          </div>
+          <div class="r">${fmtPts(w?.points ?? 0)}</div>
+        </div>
+      `;
+    };
+
+    const simpleItem = (it) => `
+      <div class="row">
+        <div class="l">
+          <b>${escapeHtml(it?.name ?? "Unnamed")}</b>
+          ${it?.effect ? `<div class="small">${it.effect}</div>` : ""}
+          ${typeof it?.cv === "number" ? `<div class="small muted">CV: ${escapeHtml(it.cv)}</div>` : ""}
+        </div>
+        <div class="r">${fmtPts(it?.points ?? 0)}</div>
+      </div>
+    `;
+
+    listEl.innerHTML = team.map((entry) => {
+      const f = entry.data.fighter;
+      const totalPts = calcFighterTotal(f);
+      const appName = detectGameApp(entry.data);
+
+      const role =
+        f.isMasterWarlock ? "Master Warlock" :
+        (f.isWarlock ? "Warlock" : "Fighter");
+
+      const stats = f.stats || {};
+      const statKVs = [
+        ["Move", stats.move],
+        ["DEF", stats.def],
+        ["AP", stats.ap],
+        ["HP", stats.hp],
+        ["ATK", stats.atk],
+        ["Fight", stats.fight],
+        ["Shoot", stats.shoot],
+      ].map(([k,v]) => `
+        <div class="kv"><div class="k">${k}</div><div class="v">${escapeHtml(v ?? "")}</div></div>
+      `).join("");
+
+      const pointsBreakdownRows = Object.entries(f.points || {}).map(([k,v]) => `
+        <div class="row">
+          <div class="l"><b>${escapeHtml(k)}</b></div>
+          <div class="r">${fmtPts(v)}</div>
+        </div>
+      `).join("");
+
+      return `
+        <div class="fighter" data-id="${entry.id}">
+          <div class="fighterHead">
+            <div class="left">
+              <div class="name">${escapeHtml(f.name)} <span class="muted" style="font-weight:700"></span></div>
+              <div class="meta">Source: ${escapeHtml(entry.sourceFileName || "—")}</div>
+            </div>
+            <div class="right">
+              <div class="actionsRow">
+                <div class="costTag">${fmtPts(totalPts)}</div>
+                <button class="accent2" data-action="card" data-id="${entry.id}">Generate/Print Card</button>
+              </div>
+              <div class="actionsRow">
+                <button class="accent" data-action="edit" data-id="${entry.id}">Edit</button>
+                <button class="accent" data-action="dup" data-id="${entry.id}">Duplicate</button>
+                <button class="danger" data-action="remove" data-id="${entry.id}">Remove</button>
+              </div>
+            </div>
+          </div>
+
+          <details>
+            <summary>Show Profile</summary>
+            <div class="body">
+              <div class="section">
+                <h3>Stats</h3>
+                <div class="kvs">${statKVs}</div>
+              </div>
+
+              ${listItems(f.ccWeapons, "Close Combat Weapons", weaponItem)}
+              ${listItems(f.rangedWeapons, "Ranged Weapons", weaponItem)}
+              ${listItems(f.abilities, "Abilities", simpleItem)}
+              ${listItems(f.leaderAbilities, "Leader Abilities", simpleItem)}
+              ${listItems(f.spells, "Spells", simpleItem)}
+              ${listItems(f.equipment, "Equipment", simpleItem)}
+
+              <div class="section">
+                <h3>Points Breakdown</h3>
+                ${pointsBreakdownRows}
+                <div class="row">
+                  <div class="l"><b>Total</b></div>
+                  <div class="r">${fmtPts(totalPts)}</div>
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+      `;
+    }).join("");
+
+    // Persist roster to this browser so the Fighter Builder can open/edit fighters.
+    saveTeamStateToBrowser();
+  }
+
+  function setStatus(msg, isError=false) {
+    if (!msg) { statusEl.textContent = ""; return; }
+    statusEl.innerHTML = isError ? `<span class="error">${escapeHtml(msg)}</span>` : escapeHtml(msg);
+  }
+
+  async function readFileAsText(file) {
+    return await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(String(r.result || ""));
+      r.onerror = () => reject(r.error || new Error("Failed reading file"));
+      r.readAsText(file);
+    });
+  }
+
+  async function importFighterFiles(files) {
+    const arr = Array.from(files || []);
+    if (arr.length === 0) return;
+
+    let added = 0;
+    let skipped = 0;
+
+    for (const file of arr) {
+      try {
+        const txt = await readFileAsText(file);
+        const obj = JSON.parse(txt);
+        const err = validateFighterJson(obj);
+        if (err) { skipped++; continue; }
+        const fg = B28.detectGame(obj);
+        if (fg && fg !== B28.gameKey && !confirm(file.name + " was made for " + B28.GAMES[fg].name + ". Add it to this " + B28.T.teamLower + " anyway?")) { skipped++; continue; }
+        const normalized = normalizePayloadWithCurrentRules(obj);
+        const id = uid();
+        await ensurePortraitStoredOnFighter(normalized?.fighter, id);
+        team.push({ id, sourceFileName: file.name, data: normalized });
+        added++;
+      } catch {
+        skipped++;
+      }
+    }
+
+    if (added) setStatus(`Loaded ${added} fighter file(s). ${skipped ? `Skipped ${skipped}.` : ""}`);
+    else setStatus(`No valid fighter files found.`, true);
+
+    // Persist roster in-browser (used by the Fighter Builder bridge)
+    saveTeamStateToBrowser();
+
+    render();
+  }
+
+  function removeFighter(id) {
+    team = team.filter(x => x.id !== id);
+    // Persist roster in-browser (used by the Fighter Builder bridge)
+    saveTeamStateToBrowser();
+
+    render();
+  }
+
+  function duplicateFighter(id) {
+    const entry = team.find(x => x.id === id);
+    if (!entry) return;
+    const clone = JSON.parse(JSON.stringify(entry.data));
+    const name = clone?.fighter?.name || "Fighter";
+    clone.fighter.name = name + " (Copy)";
+    const normalizedClone = normalizePayloadWithCurrentRules(clone);
+    team.push({ id: uid(), sourceFileName: entry.sourceFileName, data: normalizedClone });
+    // Persist roster in-browser (used by the Fighter Builder bridge)
+    saveTeamStateToBrowser();
+
+    render();
+  }
+
+    async function exportTeam() {
+    const exported = {
+      app: "Mortalis / Dark Realms Team Builder",
+      game: B28.gameKey,
+      version: 1,
+      savedAt: new Date().toISOString(),
+      warbandName: (warbandNameEl?.value || "").trim(),
+      limit: safeNumber(limitInput.value),
+      fighters: []
+    };
+
+    for (const entry of team){
+      const data = JSON.parse(JSON.stringify(entry.data));
+      // Re-attach portrait bytes only for exported file
+      if (data?.fighter){
+        await attachPortraitForExport(data.fighter);
+      }
+      exported.fighters.push({ sourceFileName: entry.sourceFileName || "", fighterFile: data });
+    }
+
+    const blob = new Blob([JSON.stringify(exported, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    const wb = (warbandNameEl?.value || "").trim();
+    const safe = (wb ? wb : (B28.T.teamLower + "_roster"))
+      .replace(/[^a-z0-9]+/gi, "_")
+      .replace(/^_+|_+$/g, "")
+      .slice(0, 60);
+
+    a.download = `${safe}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    setStatus("Exported " + B28.T.teamLower + " file.");
+  }
+  function populatePrebuiltTeams() {
+    if (!prebuiltTeamSelect) return;
+    if (prebuiltTeamSelect.options[0]) prebuiltTeamSelect.options[0].textContent = "Load Prebuilt " + B28.T.team + "...";
+    prebuiltTeamSelect.style.display = PREBUILT_TEAMS.length ? "" : "none";
+    // Keep first placeholder option, then add configured teams.
+    while (prebuiltTeamSelect.options.length > 1) {
+      prebuiltTeamSelect.remove(1);
+    }
+    for (const teamInfo of PREBUILT_TEAMS) {
+      const opt = document.createElement("option");
+      opt.value = teamInfo.url;
+      opt.textContent = teamInfo.label;
+      prebuiltTeamSelect.appendChild(opt);
+    }
+  }
+
+  async function importTeamObject(obj, sourceLabel) {
+    const fileGame = B28.detectGame(obj);
+    if (fileGame && fileGame !== B28.gameKey) {
+      const other = B28.GAMES[fileGame].name;
+      if (confirm("This file was made for " + other + ". Switch to " + other + " and load it there?")) {
+        try { sessionStorage.setItem("b28_pending_team", JSON.stringify(obj)); } catch (e) {}
+        B28.setGame(fileGame);
+        return false;
+      }
+    }
+    if (!obj || typeof obj !== "object" || !Array.isArray(obj.fighters)) {
+      setStatus("Not a valid " + B28.T.teamLower + " file (missing fighters array).", true);
+      return false;
+    }
+
+    // Restore warband name if present
+    if (typeof obj.warbandName === "string" && warbandNameEl) {
+      warbandNameEl.value = obj.warbandName;
+      saveWarbandName(obj.warbandName);
+    }
+
+    // Restore limit if present (optional)
+    if (typeof obj.limit === "number") limitInput.value = String(Math.max(0, obj.limit));
+
+    const loaded = [];
+    for (const item of obj.fighters) {
+      const fighterFile = item?.fighterFile;
+      const err = validateFighterJson(fighterFile);
+      if (err) continue;
+      const normalized = normalizePayloadWithCurrentRules(fighterFile);
+      const id = uid();
+      await ensurePortraitStoredOnFighter(normalized?.fighter, id);
+      loaded.push({ id, sourceFileName: item?.sourceFileName || sourceLabel || "", data: normalized });
+    }
+
+    team = loaded;
+    setStatus(`Imported ${B28.T.teamLower}: ${team.length} fighter(s).`);
+    // Persist roster in-browser (used by the Fighter Builder bridge)
+    saveTeamStateToBrowser();
+
+    render();
+    return true;
+  }
+
+  async function importTeamFile(file) {
+    if (!file) return;
+    try {
+      const txt = await readFileAsText(file);
+      const obj = JSON.parse(txt);
+      await importTeamObject(obj, file.name || "team file");
+    } catch (e) {
+      setStatus(`Failed importing ${B28.T.teamLower} file: ${e?.message || e}`, true);
+    }
+  }
+
+  async function importPrebuiltTeam(url) {
+    if (!url) return;
+    try {
+      setStatus("Loading prebuilt " + B28.T.teamLower + "...");
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error(`Could not load ${url} (${response.status})`);
+      }
+      const obj = await response.json();
+      await importTeamObject(obj, url.split("/").pop() || "prebuilt team");
+    } catch (e) {
+      setStatus(`Failed loading prebuilt ${B28.T.teamLower}: ${e?.message || e}`, true);
+    }
+  }
+
+  // ---- Events ----
+  fileInput.addEventListener("change", async (e) => {
+    setStatus("");
+    await importFighterFiles(e.target.files);
+    fileInput.value = "";
+  });
+
+  teamInput.addEventListener("change", async (e) => {
+    setStatus("");
+    const file = e.target.files?.[0];
+    await importTeamFile(file);
+    teamInput.value = "";
+  });
+
+  if (prebuiltTeamSelect) {
+    prebuiltTeamSelect.addEventListener("change", async (e) => {
+      const url = e.target.value;
+      if (!url) return;
+      await importPrebuiltTeam(url);
+      prebuiltTeamSelect.value = "";
+    });
+  }
+
+  exportBtn.addEventListener("click", async () => {
+    if (team.length === 0) return setStatus("Nothing to export.", true);
+    await exportTeam();
+  });
+
+  clearBtn.addEventListener("click", () => {
+    team = [];
+    setStatus("Cleared " + B28.T.teamLower + ".");
+    // Persist roster in-browser (used by the Fighter Builder bridge)
+    saveTeamStateToBrowser();
+
+    render();
+  });
+
+  if (addFighterBtn){
+    addFighterBtn.addEventListener("click", () => {
+      startEditFighter(null);
+    });
+  }
+
+  listEl.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+    const action = btn.getAttribute("data-action");
+    const id = btn.getAttribute("data-id");
+    if (action === "card") startGenerateCard(id);
+    if (action === "edit") startEditFighter(id);
+    if (action === "remove") removeFighter(id);
+    if (action === "dup") duplicateFighter(id);
+  });
+
+  limitInput.addEventListener("input", () => { saveTeamStateToBrowser(); render(); });
+
+  // Warband name persistence
+  if (warbandNameEl) {
+    warbandNameEl.value = loadWarbandName();
+    warbandNameEl.addEventListener("input", () => { saveWarbandName(warbandNameEl.value); saveTeamStateToBrowser(); });
+  }
+
+  populatePrebuiltTeams();
+
+  // Try to restore an in-browser roster (used by the Fighter Builder bridge)
+  loadTeamStateFromBrowser();
+  try {
+    const pend = sessionStorage.getItem("b28_pending_team");
+    if (pend) { sessionStorage.removeItem("b28_pending_team"); importTeamObject(JSON.parse(pend), "file"); }
+  } catch (e) {}
+  // One-time migration: move any embedded portraitDataUrl into IndexedDB, then re-save a lean roster.
+  migrateExistingPortraitsToIndexedDB().then(() => { saveTeamStateToBrowser(); render(); });
+  return;
+
+  render();
+})();
+</script>
+</body>
+</html>
