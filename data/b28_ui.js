@@ -85,9 +85,113 @@
     else document.body.insertBefore(bar, document.body.firstChild);
   }
 
+
+  // ---- "Open full page" (only shown when the app runs inside an iframe, e.g. on Blogger) ----
+  // Browsers keep an iframe's saved data apart from the same site opened on its own, so the
+  // button hands everything over to the new tab: saved team/warband, settings, portraits and
+  // the fighter currently being edited.
+  var inIframe = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
+  B28.inIframe = inIframe;
+  var PORTRAIT_DB = "warband_portraits_v1", PORTRAIT_STORE = "portraits";
+
+  function idbAll () {
+    return new Promise(function (resolve) {
+      try {
+        var req = indexedDB.open(PORTRAIT_DB, 1);
+        req.onupgradeneeded = function () { var db = req.result; if (!db.objectStoreNames.contains(PORTRAIT_STORE)) db.createObjectStore(PORTRAIT_STORE); };
+        req.onerror = function () { resolve([]); };
+        req.onsuccess = function () {
+          var db = req.result, out = [];
+          try {
+            var cur = db.transaction(PORTRAIT_STORE, "readonly").objectStore(PORTRAIT_STORE).openCursor();
+            cur.onsuccess = function () { var c = cur.result; if (c) { out.push([c.key, c.value]); c.continue(); } else resolve(out); };
+            cur.onerror = function () { resolve(out); };
+          } catch (e) { resolve(out); }
+        };
+      } catch (e) { resolve([]); }
+    });
+  }
+  function idbPutAll (pairs) {
+    return new Promise(function (resolve) {
+      if (!pairs || !pairs.length) return resolve();
+      try {
+        var req = indexedDB.open(PORTRAIT_DB, 1);
+        req.onupgradeneeded = function () { var db = req.result; if (!db.objectStoreNames.contains(PORTRAIT_STORE)) db.createObjectStore(PORTRAIT_STORE); };
+        req.onerror = function () { resolve(); };
+        req.onsuccess = function () {
+          try {
+            var tx = req.result.transaction(PORTRAIT_STORE, "readwrite"), st = tx.objectStore(PORTRAIT_STORE);
+            pairs.forEach(function (kv) { st.put(kv[1], kv[0]); });
+            tx.oncomplete = function () { resolve(); }; tx.onerror = function () { resolve(); };
+          } catch (e) { resolve(); }
+        };
+      } catch (e) { resolve(); }
+    });
+  }
+  function collectHandover () {
+    var ls = {};
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i), v = localStorage.getItem(k);
+        if (v != null && v !== "") ls[k] = v;
+      }
+    } catch (e) {}
+    var fighter = null;
+    try { if (typeof window.b28SnapshotFighter === "function") fighter = window.b28SnapshotFighter(); } catch (e) {}
+    return idbAll().then(function (idb) { return { type: "b28-handover", ls: ls, idb: idb, fighter: fighter }; });
+  }
+  function openFullPage () {
+    var u = new URL(location.href);
+    u.searchParams.set("game", B28.gameKey);
+    u.searchParams.set("b28handover", "1");
+    var w = window.open(u.toString(), "_blank");
+    if (!w) { u.searchParams.delete("b28handover"); location.href = u.toString(); return; }
+    var payloadP = collectHandover();
+    function onMsg (ev) {
+      if (ev.source !== w || ev.origin !== location.origin || !ev.data || ev.data.type !== "b28-ready") return;
+      window.removeEventListener("message", onMsg);
+      payloadP.then(function (p) { try { w.postMessage(p, location.origin); } catch (e) {} });
+    }
+    window.addEventListener("message", onMsg);
+    setTimeout(function () { window.removeEventListener("message", onMsg); }, 30000);
+  }
+  // New tab side: ask the iframe for its data, store it, then reload once
+  (function receiveHandover () {
+    var params;
+    try { params = new URLSearchParams(location.search); } catch (e) { return; }
+    if (params.get("b28handover") !== "1") return;
+    var clean = new URL(location.href); clean.searchParams.delete("b28handover");
+    try { history.replaceState(null, "", clean.toString()); } catch (e) {}
+    if (inIframe || !window.opener) return;
+    function onMsg (ev) {
+      if (ev.source !== window.opener || ev.origin !== location.origin || !ev.data || ev.data.type !== "b28-handover") return;
+      window.removeEventListener("message", onMsg);
+      var d = ev.data;
+      try { Object.keys(d.ls || {}).forEach(function (k) { localStorage.setItem(k, d.ls[k]); }); } catch (e) {}
+      try { if (d.fighter) sessionStorage.setItem("b28_pending_import", JSON.stringify(d.fighter)); } catch (e) {}
+      idbPutAll(d.idb).then(function () { location.replace(clean.toString()); });
+    }
+    window.addEventListener("message", onMsg);
+    try { window.opener.postMessage({ type: "b28-ready" }, location.origin); } catch (e) {}
+    setTimeout(function () { window.removeEventListener("message", onMsg); }, 10000);
+  })();
+  function addFullPageButton () {
+    if (!inIframe) return;
+    var chooser = document.querySelector(".b28-chooser");
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "b28-game-btn b28-fullpage-btn";
+    b.textContent = "Open full page ↗";
+    b.title = "Open the " + B28.T.gameName + " builder on its own page (better on phones)";
+    b.addEventListener("click", openFullPage);
+    if (chooser) chooser.insertBefore(b, chooser.firstChild);
+    else document.body.insertBefore(b, document.body.firstChild);
+  }
+
   function init () {
     applyTerms(document);
     if (!B28.storageOK) showStorageWarning();
+    addFullPageButton();
     var btns = document.querySelectorAll(".b28-game-btn");
     for (var i = 0; i < btns.length; i++) {
       var g = btns[i].getAttribute("data-game");
