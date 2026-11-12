@@ -36,7 +36,7 @@
         texture: "img/mortalis/mortalistexture.jpg",
         iconCC: "img/mortalis/sword.svg",
         iconRanged: "img/mortalis/crosshair.svg",
-        logo: "img/mortalis/fighterforge.png",
+        logo: "img/mortalis/mortalis_logo.png",
         featBg: "img/mortalis/feat-card-bg.jpg"
       },
       storagePrefix: "mortalis",
