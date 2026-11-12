@@ -1025,6 +1025,11 @@ html.game-wr .b28-game-btn.active{background:#57151c;color:#f4e5d7;border-color:
     html .b28-chooser.b28-chooser-float{left:14px;pointer-events:none}
     html .b28-chooser.b28-chooser-float > *{pointer-events:auto}
     @media (max-width:640px){html .b28-chooser .b28-fullpage-btn{font-size:.8rem!important;padding:.35rem .8rem!important}}
+    /* Option cards: never let names, rules text or prices spill outside the card */
+    html .item-row-header{min-width:0}
+    html .item-main{min-width:0;overflow-wrap:anywhere}
+    html .item-points{flex:0 1 auto;max-width:45%;text-align:right;overflow-wrap:break-word}
+    @media (max-width:600px){html .weapons-options-grid{grid-template-columns:1fr!important}}
     html .b28-chooser-label{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
     html .b28-chooser .b28-game-btn{font-size:.72rem!important;padding:.28rem .72rem!important;line-height:1.2!important;min-height:0!important}
     @media (max-width:640px){html .b28-chooser.b28-chooser-float{position:static;justify-content:center;margin:0 auto 8px!important}}
@@ -2369,7 +2374,8 @@ var upBtn = pill.querySelector(".stat-up");
           if (isSpell) {
             rightLabel = B28.T.cv + " " + it.cv + B28.T.cvSuffix;
           } else {
-            rightLabel = (it.points || 0) + " pts";
+            // Fixed costs show "x pts"; costs worked out from the fighter show their rule (e.g. "= priciest Pistol")
+            rightLabel = (typeof it.points === "string" && /[a-z%=]/i.test(it.points)) ? it.points : ((it.points || 0) + " pts");
           }
 
           html += ''
