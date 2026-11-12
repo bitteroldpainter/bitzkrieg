@@ -135,7 +135,7 @@
         texture: "img/wr/darkrealmstextureparchment.jpg?v=5",
         iconCC: "img/wr/sword.svg",
         iconRanged: "img/wr/bow.svg",
-        logo: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEin53YjAv5DMXeyTtBZ46sdejUgvoHz7ywthTD96Kos-uKuFtaSPbW6E4HQLHtfehFonJX4f3eU18-I7CY2WJeZq76lX2bIwjEZC0d_V0rN9KaWNxSxzwkh6DBiPeR6dwyuHhGCTif7vNtjban5sPiLesX5dg-u9T_50AQeeSp3kolL0WpcWTFueTj06IVh/s1482/FFWrathicon.png",
+        logo: "img/wr/wrath_ruin_logo.png",
         featBg: "img/wr/feat-card-bg.jpg"
       },
       storagePrefix: "wr",
