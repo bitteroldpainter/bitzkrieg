@@ -222,18 +222,50 @@ html.b28-home #Blog1{display:none !important}
 
   <!-- ===== Latest update + Discord ===== -->
   <section class="b28h-two" style="padding-bottom:48px">
-    <div class="b28h-box">
-      <p class="b28h-kicker">Latest update &middot; v[X.X] &middot; [DATE]</p>
-      <h2>Balance pass</h2>
-      <ul>
-        <li>Fast and Agent now cost 3 pts.</li>
-        <li>Gunslinger reworked.</li>
-        <li>Boost (1) weapon upgrade removed.</li>
-        <li>A 3rd AP costs 7 pts; AP is capped at 3.</li>
-        <li>Sustained Fire and Aggressive replace Hyper Aggressive.</li>
+    <!-- Filled in automatically from the newest entry on the Changelog page.
+         What's written here only shows if the Changelog page can't be read. -->
+    <div class="b28h-box" id="b28h-update">
+      <p class="b28h-kicker" id="b28h-update-meta">Latest update</p>
+      <h2 id="b28h-update-title">What's new</h2>
+      <ul id="b28h-update-list">
+        <li>See every rules change, newest first, in the changelog.</li>
       </ul>
       <a class="b28h-more" href="https://www.bitzkrieg28.com/p/changelog.html">Full changelog &rarr;</a>
     </div>
+    <script>
+    (function () {
+      if (!/\bb28-home\b/.test(document.documentElement.className) || !window.fetch || !window.DOMParser) return;
+      function txt (el) { return el ? el.textContent.replace(/\s+/g, " ").trim() : ""; }
+      function firstSentence (s) { var m = s.match(/^.*?[.!?](?=\s|$)/); return m ? m[0] : s; }
+      fetch("/p/changelog.html", { credentials: "same-origin" })
+        .then(function (r) { if (!r.ok) throw 0; return r.text(); })
+        .then(function (html) {
+          var doc = new DOMParser().parseFromString(html, "text/html");
+          var entry = doc.querySelector(".b28-log");
+          if (!entry) return;
+          var items = entry.querySelectorAll("li");
+          if (!items.length) return;
+          var meta = ["Latest update", txt(entry.querySelector(".b28-log-ver")), txt(entry.querySelector(".b28-log-date"))]
+            .filter(function (s) { return s; }).join(" · ");
+          document.getElementById("b28h-update-meta").textContent = meta;
+          var title = txt(entry.querySelector(".b28-log-title"));
+          if (title) document.getElementById("b28h-update-title").textContent = title;
+          var ul = document.getElementById("b28h-update-list");
+          while (ul.firstChild) ul.removeChild(ul.firstChild);
+          for (var i = 0; i < items.length && i < 5; i++) {
+            var li = document.createElement("li");
+            li.textContent = firstSentence(txt(items[i]));
+            ul.appendChild(li);
+          }
+          if (items.length > 5) {
+            var more = document.createElement("li");
+            more.textContent = "…and " + (items.length - 5) + " more.";
+            ul.appendChild(more);
+          }
+        })
+        .catch(function () {});
+    })();
+    </script>
     <div class="b28h-discord">
       <div class="head">
         <img src="https://bitteroldpainter.github.io/bitzkrieg/home/discord.png" alt="">
