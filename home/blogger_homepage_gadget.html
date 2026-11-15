@@ -246,7 +246,7 @@ html.b28-home #Blog1{display:none !important}
           var items = entry.querySelectorAll("li");
           if (!items.length) return;
           var meta = ["Latest update", txt(entry.querySelector(".b28-log-ver")), txt(entry.querySelector(".b28-log-date"))]
-            .filter(function (s) { return s; }).join(" · ");
+            .filter(function (s) { return s; }).join(" " + String.fromCharCode(183) + " ");
           document.getElementById("b28h-update-meta").textContent = meta;
           var title = txt(entry.querySelector(".b28-log-title"));
           if (title) document.getElementById("b28h-update-title").textContent = title;
@@ -259,7 +259,7 @@ html.b28-home #Blog1{display:none !important}
           }
           if (items.length > 5) {
             var more = document.createElement("li");
-            more.textContent = "…and " + (items.length - 5) + " more.";
+            more.textContent = String.fromCharCode(8230) + "and " + (items.length - 5) + " more.";
             ul.appendChild(more);
           }
         })
