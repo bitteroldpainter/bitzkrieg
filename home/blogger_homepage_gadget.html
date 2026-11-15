@@ -1,0 +1,261 @@
+<!-- =====================================================================
+     BITZKRIEG 28 HOMEPAGE  &mdash;  paste all of this into ONE "HTML/JavaScript" gadget
+     (Layout &rarr; Add a Gadget &rarr; HTML/JavaScript; leave the gadget Title empty).
+     Put the gadget in the main column, above "Blog Posts".
+
+     - Only shows on the homepage. Elsewhere it stays hidden.
+     - Hides the post list (#Blog1) on the homepage.
+     - Links marked  href="#"  still need your real addresses (rules PDFs, Discord &hellip;).
+     ===================================================================== -->
+
+<script>
+(function () {
+  var p = location.pathname, q = location.search.replace(/[?&]m=\d/, "");
+  if ((p === "/" || p === "/index.html") && !q) document.documentElement.className += " b28-home";
+})();
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Saira+Semi+Condensed:wght@500;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+/* Hidden everywhere except the homepage; the post list is hidden on the homepage */
+.b28h{display:none}
+html.b28-home .b28h{display:block}
+html.b28-home #Blog1{display:none !important}
+
+/* Reset whatever the theme does to headings, images and lists inside the homepage */
+.b28h,.b28h *{box-sizing:border-box}
+.b28h{--gold:#f5d7a1;color:#e6e6e6;font:16px/1.55 Roboto,system-ui,sans-serif;text-align:left}
+.b28h img{border:0;padding:0;margin:0;background:none;box-shadow:none;max-width:100%;height:auto;display:block}
+.b28h h1,.b28h h2,.b28h h3{font-family:"Saira Semi Condensed",sans-serif;text-transform:uppercase;margin:0;padding:0;border:0;background:none;line-height:1.1}
+.b28h p{margin:0}
+.b28h a{color:var(--gold);text-decoration:none}
+.b28h a:hover{color:#fff}
+.b28h ul,.b28h ol{margin:0}
+
+.b28h-section{padding:48px 0}
+.b28h-band{background:#181818;border:1px solid #333;border-radius:12px;padding:40px 28px;margin:16px 0}
+.b28h-kicker{font-family:"Saira Semi Condensed",sans-serif;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#9a9a9a;font-size:14px;margin-bottom:8px !important}
+.b28h-h2{font-weight:800;font-size:36px;color:var(--gold);letter-spacing:.03em;margin-bottom:24px !important}
+.b28h-lead{color:#bdbdbd;max-width:680px;margin-bottom:28px !important}
+
+/* Hero */
+.b28h-hero{display:grid;grid-template-columns:1.15fr 1fr;gap:48px;align-items:center;padding:40px 0}
+.b28h-hero h1{font-weight:800;font-size:58px;line-height:1.02;color:var(--gold);margin-bottom:18px}
+.b28h-hero p.txt{font-size:18px;color:#d0d0d0;margin-bottom:14px;max-width:560px}
+.b28h-hero strong{color:#fff}
+.b28h-imgbtns{display:flex;flex-wrap:wrap;gap:16px;margin-top:26px}
+.b28h-imgbtns img{width:260px;transition:transform .15s ease,filter .15s ease}
+.b28h-imgbtns a:hover img{transform:translateY(-2px);filter:brightness(1.15)}
+.b28h-cover{border:2px solid #5a5a5a;border-radius:10px;padding:10px;background:#2b2b2b;box-shadow:0 20px 50px rgba(0,0,0,.55);transform:rotate(1.5deg)}
+.b28h-cover img{border-radius:4px;width:100%}
+.b28h-tagline{margin-top:22px !important;text-align:center;font-family:"Saira Semi Condensed",sans-serif;font-weight:800;font-size:22px;letter-spacing:.04em;text-transform:uppercase;color:#fff;line-height:1.3}
+.b28h-tagline span{color:var(--gold)}
+
+/* Sprue divider */
+.b28h-sprue{display:flex;align-items:center}
+.b28h-sprue i{width:14px;height:14px;border-radius:50%;background:#6b6b6b}
+.b28h-sprue b{flex:1;height:4px;background:#555}
+
+/* Feature tiles */
+.b28h-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.b28h-tile{background:#2b2b2b;border:1px solid #3c3c3c;border-radius:8px;padding:22px}
+.b28h-tile h3{font-size:22px;color:#fff;margin-bottom:6px}
+.b28h-tile p{color:#bdbdbd}
+
+/* Game cards */
+.b28h-worlds{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.b28h-world{border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.b28h-world.mortalis{background:#22262a;border:1px solid #4a5560;--c:#ff9f1c}
+.b28h-world.wr{background:#2a1f1d;border:1px solid #6b3b2e;--c:#d9a066}
+.b28h-world-img{position:relative;height:250px;background:#111}
+.b28h-world-img .photo{width:100%;height:100%;object-fit:cover;opacity:.55}
+.b28h-world-img .logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:78%}
+.b28h-world-body{padding:22px 24px 26px;display:flex;flex-direction:column;gap:14px;flex:1}
+.b28h-world-body .tag{font-family:"Saira Semi Condensed",sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--c);font-size:14px}
+.b28h-world-body .txt{color:#d4d4d4}
+.b28h-btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:auto}
+.b28h a.b28h-btn{display:inline-flex;align-items:center;min-height:44px;padding:0 20px;border-radius:4px;font-family:"Saira Semi Condensed",sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.05em;background:var(--c);color:#1a1a1a;border:2px solid var(--c)}
+.b28h a.b28h-btn.outline{background:transparent;color:var(--c)}
+.b28h a.b28h-btn:hover{filter:brightness(1.15)}
+.b28h-own{margin-top:24px;border:2px dashed #555;border-radius:10px;padding:22px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px}
+.b28h-own h3{font-weight:800;font-size:22px;color:#fff}
+.b28h-own p{color:#bdbdbd;flex:1;min-width:240px}
+.b28h-own a,.b28h-more{font-family:"Saira Semi Condensed",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+
+/* Steps */
+.b28h-steps{list-style:none;padding:0 !important;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+.b28h-steps li{display:flex;flex-direction:column;gap:12px;margin:0;padding:0}
+.b28h-steps li::before{display:none}
+.b28h-steps h3{font-size:24px;color:#fff}
+.b28h-steps h3 span{color:var(--gold)}
+.b28h-steps p{color:#bdbdbd}
+.b28h-ph{aspect-ratio:4/3;border-radius:8px;background:#2b2b2b;border:1px dashed #555;display:flex;align-items:center;justify-content:center;color:#8a8a8a;font-size:14px;text-align:center;padding:12px}
+.b28h-steps img{aspect-ratio:4/3;width:100%;object-fit:cover;border-radius:8px}
+
+/* Update + Discord */
+.b28h-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.b28h-box{background:#2b2b2b;border:1px solid #3c3c3c;border-radius:10px;padding:28px}
+.b28h-box h2{font-weight:800;font-size:28px;color:var(--gold);margin-bottom:16px}
+.b28h-box ul{padding-left:20px !important;color:#d0d0d0;margin-bottom:18px !important}
+.b28h-box li{margin:0 0 6px;padding:0}
+.b28h-discord{background:#2a2d4a;border:1px solid #5865f2;border-radius:10px;padding:28px;display:flex;flex-direction:column;gap:14px}
+.b28h-discord .head{display:flex;align-items:center;gap:16px}
+.b28h-discord .head img{width:56px;height:56px}
+.b28h-discord h2{font-weight:800;font-size:28px;color:#fff}
+.b28h-discord p{color:#d6d9f5}
+.b28h a.b28h-dbtn{align-self:flex-start;margin-top:auto;display:inline-flex;align-items:center;min-height:48px;padding:0 24px;border-radius:6px;background:#5865f2;color:#fff;font-family:"Saira Semi Condensed",sans-serif;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.05em}
+.b28h a.b28h-dbtn:hover{background:#4752c4}
+
+/* Community photos */
+.b28h-photos{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.b28h-photos .b28h-ph,.b28h-photos img{aspect-ratio:1;width:100%;object-fit:cover;border-radius:8px}
+
+/* Phones */
+@media (max-width:760px){
+  .b28h-hero,.b28h-worlds{grid-template-columns:1fr}
+  .b28h-hero{gap:32px;padding:24px 0}
+  .b28h-hero h1{font-size:40px}
+  .b28h-h2{font-size:30px}
+  .b28h-band{padding:28px 16px}
+  .b28h-imgbtns img{width:100%;max-width:320px}
+}
+</style>
+
+<div class="b28h">
+
+  <!-- ===== Hero ===== -->
+  <section class="b28h-hero">
+    <div>
+      <p class="b28h-kicker">A free skirmish engine for 28mm models</p>
+      <h1>Every model deserves a fight.</h1>
+      <p class="txt">Bitzkrieg 28 is a fast, gritty skirmish game for 5&ndash;15 fighters a side. You build your fighters to match the models you already own, so every kitbash, conversion and bits-box hero gets rules of its own.</p>
+      <p class="txt">Play it in the grimdark future with <strong>Mortalis</strong>, in a dark fantasy world with <strong>Wrath &amp; Ruin</strong>, or in any setting you dream up.</p>
+      <div class="b28h-imgbtns">
+        <a href="https://bitteroldpainter.github.io/bitzkrieg/" aria-label="Try out the Fighter Forge and build your first fighter"><img src="https://bitteroldpainter.github.io/bitzkrieg/home/btn_forge.png" alt=""></a>
+        <a href="#" aria-label="Download the Core Rules"><img src="https://bitteroldpainter.github.io/bitzkrieg/home/btn_rules.png" alt=""></a>
+      </div>
+    </div>
+    <figure style="margin:0">
+      <div class="b28h-cover"><img src="https://bitteroldpainter.github.io/bitzkrieg/home/cover_sketch.jpg" alt="Core rulebook cover: toy soldiers and monsters coming to life on a hobby desk"></div>
+      <figcaption class="b28h-tagline">YOU make the models. YOU make their rules.<br><span>ANY setting. ALWAYS free.</span></figcaption>
+    </figure>
+  </section>
+
+  <div class="b28h-sprue" aria-hidden="true"><i></i><b></b><i></i></div>
+
+  <!-- ===== Why ===== -->
+  <section class="b28h-section">
+    <h2 class="b28h-h2">Why Bitzkrieg 28?</h2>
+    <div class="b28h-grid">
+      <div class="b28h-tile"><h3>5&ndash;15 fighters</h3><p>Small enough to paint in a month, big enough to tell a story. Every fighter matters.</p></div>
+      <div class="b28h-tile"><h3>Games in about 90 minutes</h3><p>Quick turns, no bookkeeping marathons. Two games in an evening is normal.</p></div>
+      <div class="b28h-tile"><h3>The D12 system</h3><p>Twelve sides give finer odds than a D6, so a veteran really does feel better than a recruit.</p></div>
+      <div class="b28h-tile"><h3>Build what you own</h3><p>The Fighter Forge prices any combination of weapons and abilities. WYSIWYG, always.</p></div>
+      <div class="b28h-tile"><h3>Close combat matters</h3><p>Charges, counter-attacks and brutal melee weapons. Guns aren't the only answer.</p></div>
+      <div class="b28h-tile"><h3>Free. Forever.</h3><p>Rules, builders and calculators cost nothing. No paywall, no models to buy from us.</p></div>
+    </div>
+  </section>
+
+  <!-- ===== Pick your battlefield ===== -->
+  <section class="b28h-band">
+    <h2 class="b28h-h2" style="margin-bottom:8px !important">Pick your battlefield</h2>
+    <p class="b28h-lead">One rules engine, two ready-made worlds. Each has its own weapons, abilities and powers, and the same Fighter Forge builds both.</p>
+    <div class="b28h-worlds">
+      <article class="b28h-world mortalis">
+        <div class="b28h-world-img">
+          <img class="photo" src="https://bitteroldpainter.github.io/bitzkrieg/home/photo_scifi.jpg" alt="">
+          <img class="logo" src="https://bitteroldpainter.github.io/bitzkrieg/home/logo_mortalis.png" alt="Mortalis">
+        </div>
+        <div class="b28h-world-body">
+          <p class="tag">Grimdark future</p>
+          <p class="txt">Hive gangs, penal troopers and xenos raiders fight over the ruins of a dying galaxy. Guns, grenades and Psykers.</p>
+          <div class="b28h-btns">
+            <a class="b28h-btn" href="https://bitteroldpainter.github.io/bitzkrieg/?game=mortalis">Team Builder</a>
+            <a class="b28h-btn outline" href="#">Mortalis rules</a>
+          </div>
+        </div>
+      </article>
+      <article class="b28h-world wr">
+        <div class="b28h-world-img">
+          <img class="photo" src="https://bitteroldpainter.github.io/bitzkrieg/home/photo_fantasy.jpg" alt="">
+          <img class="logo" src="https://bitteroldpainter.github.io/bitzkrieg/home/logo_wr.png" alt="Wrath &amp; Ruin">
+        </div>
+        <div class="b28h-world-body">
+          <p class="tag">Dark fantasy</p>
+          <p class="txt">Undead hosts, ratmen and desperate sellswords clash in a world falling to ruin. Steel, crossbows and Warlocks.</p>
+          <div class="b28h-btns">
+            <a class="b28h-btn" href="https://bitteroldpainter.github.io/bitzkrieg/?game=wr">Warband Builder</a>
+            <a class="b28h-btn outline" href="#">W&amp;R rules</a>
+          </div>
+        </div>
+      </article>
+    </div>
+    <div class="b28h-own">
+      <h3>Your own setting</h3>
+      <p>Post-apocalypse, pulp, weird west? The Core Rules work with any 28mm collection. Name your weapons whatever you like; the points stay the same.</p>
+      <a href="#">Read the Core Rules &rarr;</a>
+    </div>
+  </section>
+
+  <!-- ===== How it works ===== -->
+  <section class="b28h-section">
+    <h2 class="b28h-h2">From bits box to battlefield</h2>
+    <ol class="b28h-steps">
+      <li>
+        <div class="b28h-ph">[PHOTO: a kitbash in progress]</div>
+        <h3><span>1.</span> Kitbash</h3>
+        <p>Build and paint the models you want. Any range, any scale close to 28mm, any mix of parts.</p>
+      </li>
+      <li>
+        <div class="b28h-ph">[SCREENSHOT: a fighter card in the Fighter Forge]</div>
+        <h3><span>2.</span> Forge</h3>
+        <p>Pick the weapons and abilities your model actually has. The Forge works out the points and prints the card.</p>
+      </li>
+      <li>
+        <div class="b28h-ph">[PHOTO: two warbands mid-game]</div>
+        <h3><span>3.</span> Fight</h3>
+        <p>Grab a friend and some terrain. Earn Feats, gain experience and watch your fighters become legends.</p>
+      </li>
+    </ol>
+    <!-- To use a real picture, replace a  <div class="b28h-ph">&hellip;</div>  with  <img src="PICTURE-ADDRESS" alt="&hellip;">  -->
+  </section>
+
+  <!-- ===== Latest update + Discord ===== -->
+  <section class="b28h-two" style="padding-bottom:48px">
+    <div class="b28h-box">
+      <p class="b28h-kicker">Latest update &middot; v[X.X] &middot; [DATE]</p>
+      <h2>Balance pass</h2>
+      <ul>
+        <li>Fast and Agent now cost 3 pts.</li>
+        <li>Gunslinger reworked.</li>
+        <li>Boost (1) weapon upgrade removed.</li>
+        <li>A 3rd AP costs 7 pts; AP is capped at 3.</li>
+        <li>Sustained Fire and Aggressive replace Hyper Aggressive.</li>
+      </ul>
+      <a class="b28h-more" href="#">Full changelog &rarr;</a>
+    </div>
+    <div class="b28h-discord">
+      <div class="head">
+        <img src="https://bitteroldpainter.github.io/bitzkrieg/home/discord.png" alt="">
+        <h2>Join the community</h2>
+      </div>
+      <p>Show off your fighters, share warbands, find opponents and help shape the next rules update.</p>
+      <a class="b28h-dbtn" href="#">Join the Discord</a>
+    </div>
+  </section>
+
+  <!-- ===== Community photos ===== -->
+  <section class="b28h-band">
+    <h2 class="b28h-h2" style="margin-bottom:6px !important;font-size:32px">Fielded by the community</h2>
+    <p class="b28h-lead" style="margin-bottom:24px !important">Post your fighters on Discord with #bitzkrieg28 and they might end up here.</p>
+    <div class="b28h-photos">
+      <div class="b28h-ph">[COMMUNITY PHOTO]</div>
+      <div class="b28h-ph">[COMMUNITY PHOTO]</div>
+      <div class="b28h-ph">[COMMUNITY PHOTO]</div>
+      <div class="b28h-ph">[COMMUNITY PHOTO]</div>
+      <div class="b28h-ph">[COMMUNITY PHOTO]</div>
+    </div>
+  </section>
+
+</div>
