@@ -17,6 +17,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Saira+Semi+Condensed:wght@500;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
+@font-face{font-family:"Geizer";src:url("https://bitteroldpainter.github.io/bitzkrieg/home/fonts/geizer.woff") format("woff");font-display:swap}
 /* Hidden everywhere except the homepage; the post list is hidden on the homepage */
 .b28h{display:none}
 html.b28-home .b28h{display:block}
@@ -26,7 +27,8 @@ html.b28-home #Blog1{display:none !important}
 .b28h,.b28h *{box-sizing:border-box}
 .b28h{--gold:#f5d7a1;color:#e6e6e6;font:16px/1.55 Roboto,system-ui,sans-serif;text-align:left}
 .b28h img{border:0;padding:0;margin:0;background:none;box-shadow:none;max-width:100%;height:auto;display:block}
-.b28h h1,.b28h h2,.b28h h3{font-family:"Saira Semi Condensed",sans-serif;text-transform:uppercase;margin:0;padding:0;border:0;background:none;line-height:1.1}
+.b28h h1,.b28h h2,.b28h h3,.b28h-tagline{font-family:Geizer,"Saira Semi Condensed",sans-serif !important;font-weight:400 !important;letter-spacing:.02em !important;}
+.b28h h1,.b28h h2,.b28h h3{text-transform:uppercase;margin:0;padding:0;border:0;background:none;line-height:1.1}
 .b28h p{margin:0}
 .b28h a{color:var(--gold);text-decoration:none}
 .b28h a:hover{color:#fff}
@@ -35,13 +37,13 @@ html.b28-home #Blog1{display:none !important}
 .b28h-section{padding:48px 0}
 .b28h-band{background:#181818;border:1px solid #333;border-radius:12px;padding:40px 28px;margin:16px 0}
 .b28h-kicker{font-family:"Saira Semi Condensed",sans-serif;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#9a9a9a;font-size:14px;margin-bottom:8px !important}
-.b28h-h2{font-weight:800;font-size:36px;color:var(--gold);letter-spacing:.03em;margin-bottom:24px !important}
+.b28h-h2{font-size:44px;color:var(--gold);letter-spacing:.03em;margin-bottom:24px !important}
 .b28h-kicker .b28h-free{color:#fff}
 .b28h-lead{color:#bdbdbd;max-width:680px;margin-bottom:28px !important}
 
 /* Hero */
 .b28h-hero{display:grid;grid-template-columns:1.15fr 1fr;gap:48px;align-items:center;padding:40px 0}
-.b28h-hero h1{font-weight:800;font-size:58px;line-height:1.02;color:var(--gold);margin-bottom:18px}
+.b28h-hero h1{font-size:68px;line-height:1.02;color:var(--gold);margin-bottom:18px}
 .b28h-hero p.txt{font-size:18px;color:#d0d0d0;margin-bottom:14px;max-width:560px}
 .b28h-hero strong{color:#fff}
 .b28h-imgbtns{display:flex;flex-wrap:wrap;gap:16px;margin-top:26px}
@@ -49,7 +51,7 @@ html.b28-home #Blog1{display:none !important}
 .b28h-imgbtns a:hover img{transform:translateY(-2px);filter:brightness(1.15)}
 .b28h-cover{border:2px solid #5a5a5a;border-radius:10px;padding:10px;background:#2b2b2b;box-shadow:0 20px 50px rgba(0,0,0,.55);transform:rotate(1.5deg)}
 .b28h-cover img{border-radius:4px;width:100%}
-.b28h-tagline{margin-top:22px !important;text-align:center;font-family:"Saira Semi Condensed",sans-serif;font-weight:800;font-size:22px;letter-spacing:.04em;text-transform:uppercase;color:#fff;line-height:1.3}
+.b28h-tagline{margin-top:22px !important;text-align:center;font-size:27px;letter-spacing:.04em;text-transform:uppercase;color:#fff;line-height:1.3}
 .b28h-tagline span{color:var(--gold)}
 
 /* Sprue divider */
@@ -60,7 +62,7 @@ html.b28-home #Blog1{display:none !important}
 /* Feature tiles */
 .b28h-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:18px}
 .b28h-tile{flex:0 1 calc((100% - 54px)/4);min-width:230px;background:#2b2b2b;border:1px solid #3c3c3c;border-radius:8px;padding:22px}
-.b28h-tile h3{font-size:22px;color:#fff;margin-bottom:6px}
+.b28h-tile h3{font-size:26px;color:#fff;margin-bottom:6px}
 .b28h-tile p{color:#bdbdbd}
 
 /* Game cards */
@@ -79,7 +81,7 @@ html.b28-home #Blog1{display:none !important}
 .b28h a.b28h-btn.outline{background:transparent;color:var(--c)}
 .b28h a.b28h-btn:hover{filter:brightness(1.15)}
 .b28h-own{margin-top:24px;border:2px dashed #555;border-radius:10px;padding:22px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px}
-.b28h-own h3{font-weight:800;font-size:22px;color:#fff}
+.b28h-own h3{font-size:26px;color:#fff}
 .b28h-own p{color:#bdbdbd;flex:1;min-width:240px}
 .b28h-own a,.b28h-more{font-family:"Saira Semi Condensed",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
 
@@ -87,7 +89,7 @@ html.b28-home #Blog1{display:none !important}
 .b28h-steps{list-style:none;padding:0 !important;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
 .b28h-steps li{display:flex;flex-direction:column;gap:12px;margin:0;padding:0}
 .b28h-steps li::before{display:none}
-.b28h-steps h3{font-size:24px;color:#fff}
+.b28h-steps h3{font-size:30px;color:#fff}
 .b28h-steps h3 span{color:var(--gold)}
 .b28h-steps p{color:#bdbdbd}
 .b28h-ph{aspect-ratio:4/3;border-radius:8px;background:#2b2b2b;border:1px dashed #555;display:flex;align-items:center;justify-content:center;color:#8a8a8a;font-size:14px;text-align:center;padding:12px}
@@ -96,13 +98,13 @@ html.b28-home #Blog1{display:none !important}
 /* Update + Discord */
 .b28h-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
 .b28h-box{background:#2b2b2b;border:1px solid #3c3c3c;border-radius:10px;padding:28px}
-.b28h-box h2{font-weight:800;font-size:28px;color:var(--gold);margin-bottom:16px}
+.b28h-box h2{font-size:34px;color:var(--gold);margin-bottom:16px}
 .b28h-box ul{padding-left:20px !important;color:#d0d0d0;margin-bottom:18px !important}
 .b28h-box li{margin:0 0 6px;padding:0}
 .b28h-discord{background:#2a2d4a;border:1px solid #5865f2;border-radius:10px;padding:28px;display:flex;flex-direction:column;gap:14px}
 .b28h-discord .head{display:flex;align-items:center;gap:16px}
 .b28h-discord .head img{width:56px;height:56px}
-.b28h-discord h2{font-weight:800;font-size:28px;color:#fff}
+.b28h-discord h2{font-size:34px;color:#fff}
 .b28h-discord p{color:#d6d9f5}
 .b28h a.b28h-dbtn{align-self:flex-start;margin-top:auto;display:inline-flex;align-items:center;min-height:48px;padding:0 24px;border-radius:6px;background:#5865f2;color:#fff;font-family:"Saira Semi Condensed",sans-serif;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.05em}
 .b28h a.b28h-dbtn:hover{background:#4752c4}
@@ -115,8 +117,8 @@ html.b28-home #Blog1{display:none !important}
 @media (max-width:760px){
   .b28h-hero,.b28h-worlds{grid-template-columns:1fr}
   .b28h-hero{gap:32px;padding:24px 0}
-  .b28h-hero h1{font-size:40px}
-  .b28h-h2{font-size:30px}
+  .b28h-hero h1{font-size:46px}
+  .b28h-h2{font-size:36px}
   .b28h-band{padding:28px 16px}
   .b28h-tile{flex:1 1 100%}
   .b28h-imgbtns img{width:100%;max-width:320px}
@@ -149,7 +151,7 @@ html.b28-home #Blog1{display:none !important}
   <section class="b28h-section">
     <h2 class="b28h-h2">Why Bitzkrieg 28?</h2>
     <div class="b28h-grid">
-      <div class="b28h-tile"><h3>5&ndash;15 fighters</h3><p>Small enough to paint in a month, big enough to tell a story. Every fighter matters.</p></div>
+      <div class="b28h-tile"><h3>5-15 fighters</h3><p>Small enough to paint in a month, big enough to tell a story. Every fighter matters.</p></div>
       <div class="b28h-tile"><h3>Games in about 90 minutes</h3><p>Quick turns, no bookkeeping marathons. Two games in an evening is normal.</p></div>
       <div class="b28h-tile"><h3>The D12 system</h3><p>Twelve sides give finer odds than a D6, so a veteran really does feel better than a recruit.</p></div>
       <div class="b28h-tile"><h3>Build what you own</h3><p>The Fighter Forge prices any combination of weapons and abilities. WYSIWYG, always.</p></div>
@@ -278,7 +280,7 @@ html.b28-home #Blog1{display:none !important}
 
   <!-- ===== Community photos ===== -->
   <section class="b28h-band">
-    <h2 class="b28h-h2" style="margin-bottom:6px !important;font-size:32px">Fielded by the community</h2>
+    <h2 class="b28h-h2" style="margin-bottom:6px !important;font-size:40px">Fielded by the community</h2>
     <p class="b28h-lead" style="margin-bottom:24px !important">Post your fighters on Discord with #bitzkrieg28 and they might end up here.</p>
     <div class="b28h-photos">
       <div class="b28h-ph">[COMMUNITY PHOTO]</div>
