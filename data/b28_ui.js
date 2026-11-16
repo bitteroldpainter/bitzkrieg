@@ -26,6 +26,248 @@
     }
   } catch (e) {}
 
+  // ---- Office mode: a quiet, light skin that opens in its own tab ----
+  // Turned on with ?skin=office (and off with ?skin=normal); remembered for the rest of the tab
+  // via sessionStorage, so moving between the Builder, Forge and Feat Sheet keeps it.
+  // Nothing is hand-copied: when the page loads, the Mortalis skin's own CSS rules are read and
+  // re-coloured on the fly, so any later layout/style change in the apps carries over by itself.
+  var SKIN_KEY = "b28_skin";
+  var officeMode = (function () {
+    var s = null;
+    try { s = new URLSearchParams(location.search).get("skin"); } catch (e) {}
+    try {
+      if (s === "office") sessionStorage.setItem(SKIN_KEY, "office");
+      else if (s === "normal") sessionStorage.removeItem(SKIN_KEY);
+      return sessionStorage.getItem(SKIN_KEY) === "office";
+    } catch (e) { return s === "office"; }
+  })();
+  B28.officeMode = officeMode;
+  if (officeMode) {
+    var rootEl = document.documentElement;
+    // One look for both games: reuse the Mortalis layout, keep the chosen game's data and wording
+    rootEl.classList.remove("game-wr");
+    rootEl.classList.add("game-mortalis", "skin-office");
+    var hideStyle = document.createElement("style");
+    hideStyle.id = "b28-office-hide";
+    hideStyle.textContent = "html.skin-office body{opacity:0}";
+    (document.head || rootEl).appendChild(hideStyle);
+  }
+
+  var OFFICE_CSS = [
+    "html.skin-office, html.skin-office body{background:#f4f3f0!important;color:#2b2f33}",
+    "html.skin-office body, html.skin-office body *:not(svg):not(path){font-family:'Segoe UI',Calibri,system-ui,-apple-system,Roboto,Arial,sans-serif!important;letter-spacing:normal!important}",
+    "html.skin-office *{text-shadow:none!important}",
+    "html.skin-office .headerLogo img, html.skin-office img[src*='logo'], html.skin-office img[src*='fighterforge']{display:none!important}",
+    "html.skin-office .headerLogo{min-height:0!important;margin:6px auto 10px!important}",
+    "html.skin-office .headerLogo::before{content:attr(data-office-title);display:block;font-size:1.45rem;font-weight:600;color:#2b2f33;padding:4px 0}",
+    "html.skin-office [style*='texture']{background-image:none!important}",
+    "html.skin-office .cardBgImg{display:none!important}",
+    "html.skin-office input:not([type=checkbox]):not([type=radio]):not([type=range]), html.skin-office select, html.skin-office textarea{background-color:#fdfdfc!important;color:#2b2f33!important;border-color:#cfd3d8!important}",
+    "html.skin-office button{border-color:#c5cad0}",
+    "html.skin-office input::placeholder{color:#8b9096}",
+    "html.skin-office button:focus-visible, html.skin-office input:focus, html.skin-office select:focus{outline:2px solid #8fb0d6;outline-offset:1px}",
+    "html.skin-office .b28-chooser .b28-game-btn{background:#fbfaf8!important;border:1px solid #cfd3d8!important;color:#3d434a!important}",
+    "html.skin-office .b28-chooser .b28-game-btn.active{background:#dfe8f2!important;border-color:#9fb6cf!important;color:#22303f!important}",
+    "html.skin-office .b28-storage-warning{background:#fbeeee!important;border-color:#e2b4b4!important;color:#5a2a2a!important}",
+    "html.skin-office .b28-welcome{background:rgba(244,243,240,.96)!important}",
+    "html.skin-office .b28-welcome-box{color:#2b2f33!important}",
+    "html.skin-office .b28-welcome-box p{color:#5d636a!important}",
+    "html.skin-office .b28-welcome-choice{background:#fbfaf8!important;border:1px solid #cfd3d8!important;color:#2b2f33!important}"
+  ].join("\n");
+
+  // --- colour helpers ---
+  function clamp01 (x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+  function rgbToHsl (r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, h = 0, s = 0;
+    if (mx !== mn) {
+      var d = mx - mn;
+      s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+      if (mx === r) h = (g - b) / d + (g < b ? 6 : 0); else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4;
+      h *= 60;
+    }
+    return [h, s, l];
+  }
+  function hsl (h, s, l, a) {
+    var str = "hsl(" + Math.round(h) + " " + Math.round(clamp01(s) * 100) + "% " + Math.round(clamp01(l) * 1000) / 10 + "%";
+    return str + (a < 1 ? " / " + Math.round(a * 1000) / 1000 : "") + ")";
+  }
+  var NAMED = { white: [255, 255, 255, 1], black: [0, 0, 0, 1], transparent: null, red: [255, 0, 0, 1], gold: [255, 215, 0, 1], orange: [255, 165, 0, 1] };
+  function parseColor (tok) {
+    var t = tok.toLowerCase(), m;
+    if (t.charAt(0) === "#") {
+      var hx = t.slice(1);
+      if (hx.length === 3 || hx.length === 4) hx = hx.split("").map(function (c) { return c + c; }).join("");
+      var a = hx.length === 8 ? parseInt(hx.slice(6, 8), 16) / 255 : 1;
+      return [parseInt(hx.slice(0, 2), 16), parseInt(hx.slice(2, 4), 16), parseInt(hx.slice(4, 6), 16), a];
+    }
+    if ((m = t.match(/^rgba?\(([^)]*)\)$/))) {
+      var p = m[1].split(/[\s,\/]+/).filter(Boolean);
+      var n = p.map(function (x, k) { var f = parseFloat(x); return x.indexOf("%") > -1 ? (k < 3 ? f * 2.55 : f / 100) : f; });
+      return [n[0], n[1], n[2], n.length > 3 ? n[3] : 1];
+    }
+    if (NAMED.hasOwnProperty(t)) return NAMED[t];
+    return undefined;
+  }
+  // Office palette: muted steel blue for anything that was orange/teal/gold, soft rose for reds,
+  // sage for greens; backgrounds all end up light, text all ends up dark.
+  function mapHue (h, s) {
+    if (s < 0.15) return null;
+    if (h < 15 || h >= 335) return 355;
+    if (h >= 85 && h < 170) return 145;
+    return 212;
+  }
+  function mapColor (rgba, role) {
+    if (!rgba) return null;
+    var hs = rgbToHsl(rgba[0], rgba[1], rgba[2]), h = hs[0], s = hs[1], l = hs[2], a = rgba[3];
+    var nh = mapHue(h, s);
+    if (role === "bg") {
+      if (nh === null) return hsl(40, 0.08, l < 0.5 ? Math.min(0.985, 0.995 - l * 0.35) : 0.85 + (l - 0.5) * 0.27, a);
+      return hsl(nh, nh === 212 ? 0.16 : 0.22, 0.84 + l * 0.1, a);
+    }
+    if (role === "border") {
+      if (nh === null) return hsl(210, 0.06, 0.8 + l * 0.06, a);
+      return hsl(nh, 0.2, 0.76, a);
+    }
+    // text / accents
+    if (nh === null) return hsl(210, 0.08, l >= 0.5 ? 0.12 + (1 - l) * 0.55 : Math.min(l, 0.3), a);
+    return hsl(nh, Math.min(s, 0.32), nh === 355 ? 0.4 : 0.33, a);
+  }
+  var COLOR_RE = /#[0-9a-fA-F]{3,8}\b|rgba?\([^)]*\)|\b(?:white|black|red|gold|orange)\b/g;
+  function mapValue (val, role) {
+    // Keep url(...) apart: drop photo textures, recolour little inline SVG icons (e.g. select arrows)
+    return val.split(/(url\([^)]*\))/).map(function (part) {
+      if (/^url\(/.test(part)) {
+        if (/data:image\/svg/.test(part)) return part.replace(/fill=(['"]|%22|%27)(?:white|%23fff(?:fff)?|#fff(?:fff)?)\1/gi, "fill=$1%23555$1");
+        return role === "bg" ? "none" : part;
+      }
+      return part.replace(COLOR_RE, function (tok) {
+        var c = parseColor(tok);
+        if (c === undefined) return tok;
+        if (c === null) return tok;
+        return mapColor(c, role) || tok;
+      });
+    }).join("");
+  }
+  function roleFor (prop) {
+    if (prop.indexOf("--") === 0) {
+      var n = prop.toLowerCase();
+      if (/grad|panel|bg|surface|card|paper/.test(n)) return "bg";
+      if (/line|border|edge/.test(n)) return "border";
+      if (/text|muted|ink|bright|fg/.test(n)) return "text";
+      if (/accent|danger|ok|orange|teal|red|bronze|gold|hover/.test(n)) return "text";
+      return null;
+    }
+    if (/^(color|-webkit-text-fill-color|caret-color|fill|stroke|text-decoration-color|column-rule-color|text-emphasis-color)$/.test(prop)) return "text";
+    if (/^background(-color|-image)?$/.test(prop)) return "bg";
+    if (/^(border|outline)(-(top|right|bottom|left|block|inline)(-(start|end))?)?(-color)?$/.test(prop) || prop === "border") return "border";
+    if (prop === "box-shadow" || prop === "text-shadow") return "none";
+    return null;
+  }
+  var SHORTHANDS = ["background", "border", "border-top", "border-right", "border-bottom", "border-left", "border-color", "outline"];
+  function officeSelector (sel) {
+    // split on top-level commas only
+    var parts = [], depth = 0, cur = "";
+    for (var i = 0; i < sel.length; i++) {
+      var ch = sel.charAt(i);
+      if (ch === "(") depth++; else if (ch === ")") depth--;
+      if (ch === "," && depth === 0) { parts.push(cur); cur = ""; } else cur += ch;
+    }
+    parts.push(cur);
+    var out = [];
+    parts.forEach(function (p) {
+      p = p.trim();
+      if (!p || p.indexOf("game-wr") > -1 || p.indexOf("skin-office") > -1) return;
+      if (p.indexOf("html.game-mortalis") > -1) out.push(p.replace("html.game-mortalis", "html.skin-office.game-mortalis"));
+      else if (/^html\b/.test(p)) out.push(p.replace(/^html/, "html.skin-office"));
+      else if (/^:root\b/.test(p)) out.push(p.replace(/^:root/, "html.skin-office"));
+      else out.push("html.skin-office " + p);
+    });
+    return out.join(", ");
+  }
+  function convertRule (rule) {
+    var st = rule.style, decls = [], seen = {};
+    var clipText = /text/.test(st.getPropertyValue("-webkit-background-clip") + st.getPropertyValue("background-clip"));
+    function add (prop, val, imp) { if (seen[prop]) return; seen[prop] = 1; decls.push(prop + ":" + val + (imp ? " !important" : "")); }
+    SHORTHANDS.forEach(function (sh) {
+      var v = st.getPropertyValue(sh);
+      if (v && v.indexOf("var(") > -1) add(sh, mapValue(v, roleFor(sh) || "bg"), st.getPropertyPriority(sh));
+    });
+    for (var i = 0; i < st.length; i++) {
+      var prop = st[i], role = roleFor(prop);
+      if (!role) continue;
+      var v2 = st.getPropertyValue(prop), imp = st.getPropertyPriority(prop);
+      if (!v2) continue;
+      if (role === "none") { if (v2 !== "none") add(prop, "none", imp); continue; }
+      var mv = mapValue(v2, role);
+      if (mv !== v2) add(prop, mv, imp);
+    }
+    if (clipText) { add("-webkit-text-fill-color", "#2b2f33", true); add("background-image", "none", true); }
+    if (!decls.length) return "";
+    var sel = officeSelector(rule.selectorText || "");
+    return sel ? sel + "{" + decls.join(";") + "}" : "";
+  }
+  function convertRules (rules) {
+    var out = [];
+    for (var i = 0; i < rules.length; i++) {
+      var r = rules[i];
+      if (r.type === 1) out.push(convertRule(r));
+      else if (r.type === 4) { var inner = convertRules(r.cssRules); if (inner) out.push("@media " + r.media.mediaText + "{" + inner + "}"); }
+      else if (r.type === 12) { var inner2 = convertRules(r.cssRules); if (inner2) out.push("@supports " + r.conditionText + "{" + inner2 + "}"); }
+    }
+    return out.filter(Boolean).join("\n");
+  }
+  var inlineDone = (typeof WeakMap === "function") ? new WeakMap() : null;
+  function convertInlineEl (el) {
+    if (!el || !el.style || !el.style.length) return;
+    if (inlineDone && inlineDone.get(el) === el.style.cssText) return;
+    var st = el.style;
+    for (var j = st.length - 1; j >= 0; j--) {
+      var prop = st[j], role = roleFor(prop);
+      if (!role) continue;
+      var v = st.getPropertyValue(prop);
+      if (!v) continue;
+      if (role === "none") { if (v !== "none") st.setProperty(prop, "none", st.getPropertyPriority(prop)); continue; }
+      var mv = mapValue(v, role);
+      if (mv !== v) st.setProperty(prop, mv, st.getPropertyPriority(prop));
+    }
+    if (inlineDone) inlineDone.set(el, el.style.cssText);
+  }
+  function convertInlineStyles (root) {
+    // Elements the apps colour directly (style="...") get the same treatment
+    if (root && root.nodeType === 1) convertInlineEl(root);
+    var els = (root || document).querySelectorAll("[style]");
+    for (var i = 0; i < els.length; i++) convertInlineEl(els[i]);
+  }
+  function applyOffice () {
+    var css = [];
+    for (var i = 0; i < document.styleSheets.length; i++) {
+      var sh = document.styleSheets[i], rules;
+      if (sh.ownerNode && sh.ownerNode.id && sh.ownerNode.id.indexOf("b28-office") === 0) continue;
+      try { rules = sh.cssRules; } catch (e) { continue; } // e.g. Google Fonts
+      css.push(convertRules(rules));
+    }
+    var el = document.getElementById("b28-office-css") || document.createElement("style");
+    el.id = "b28-office-css";
+    el.textContent = css.join("\n") + "\n" + OFFICE_CSS;
+    document.body.appendChild(el);
+    convertInlineStyles(document);
+    var logo = document.querySelector(".headerLogo");
+    if (logo) logo.setAttribute("data-office-title", (B28.T.team || "Team") + " Builder");
+    document.title = "Planning sheet";
+    try {
+      new MutationObserver(function (muts) {
+        muts.forEach(function (m) {
+          if (m.type === "attributes") convertInlineEl(m.target);
+          else m.addedNodes.forEach(function (n) { if (n.nodeType === 1) convertInlineStyles(n); });
+        });
+      }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["style"] });
+    } catch (e) {}
+    var hide = document.getElementById("b28-office-hide");
+    if (hide) hide.parentNode.removeChild(hide);
+  }
+  B28.applyOffice = applyOffice;
+
   // ---- Wording in plain HTML: <span data-t="team">Team</span> ----
   function applyTerms (root) {
     var els = (root || document).querySelectorAll("[data-t]");
@@ -140,9 +382,10 @@
     try { if (typeof window.b28SnapshotFighter === "function") fighter = window.b28SnapshotFighter(); } catch (e) {}
     return idbAll().then(function (idb) { return { type: "b28-handover", ls: ls, idb: idb, fighter: fighter }; });
   }
-  function openFullPage () {
+  function openFullPage (skin) {
     var u = new URL(location.href);
     u.searchParams.set("game", B28.gameKey);
+    if (typeof skin === "string") u.searchParams.set("skin", skin); else u.searchParams.delete("skin");
     u.searchParams.set("b28handover", "1");
     var w = window.open(u.toString(), "_blank");
     if (!w) { u.searchParams.delete("b28handover"); location.href = u.toString(); return; }
@@ -175,9 +418,31 @@
     try { window.opener.postMessage({ type: "b28-ready" }, location.origin); } catch (e) {}
     setTimeout(function () { window.removeEventListener("message", onMsg); }, 10000);
   })();
+  function addOfficeButton (chooser, after) {
+    var o = document.createElement("button");
+    o.type = "button";
+    o.className = "b28-game-btn b28-office-btn";
+    o.textContent = "Office mode \u2197";
+    o.title = "Open the builder in a new tab with a plain, light look";
+    o.style.marginRight = "auto";
+    o.addEventListener("click", function () {
+      if (inIframe) { openFullPage("office"); return; }
+      var w = window.open(location.pathname + "?game=" + B28.gameKey + "&skin=office", "_blank");
+      if (!w) location.href = location.pathname + "?game=" + B28.gameKey + "&skin=office";
+    });
+    if (after) { after.style.marginRight = "0"; after.parentNode.insertBefore(o, after.nextSibling); }
+    else if (chooser) chooser.insertBefore(o, chooser.firstChild);
+    else document.body.insertBefore(o, document.body.firstChild);
+  }
   function addFullPageButton () {
-    if (!inIframe) return;
     var chooser = document.querySelector(".b28-chooser");
+    if (officeMode) return;
+    if (!inIframe) {
+      // Already on its own page: just offer Office mode
+      if (chooser) { chooser.style.display = "flex"; chooser.style.justifyContent = "flex-end"; }
+      addOfficeButton(chooser, null);
+      return;
+    }
     var b = document.createElement("button");
     b.type = "button";
     b.className = "b28-game-btn b28-fullpage-btn";
@@ -200,10 +465,12 @@
     } else {
       document.body.insertBefore(b, document.body.firstChild);
     }
+    addOfficeButton(chooser, b);
   }
 
   function init () {
     applyTerms(document);
+    if (officeMode) applyOffice();
     if (!B28.storageOK) showStorageWarning();
     addFullPageButton();
     var btns = document.querySelectorAll(".b28-game-btn");
