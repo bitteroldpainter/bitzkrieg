@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bitzkrieg 28 Core Rules</title>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Semi+Condensed:wght@700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   Bitzkrieg 28 rulebook viewer.
+   To publish a new rules version: replace Bitzkrieg28_Core_Rules.pdf in this
+   folder (same file name). Visitors may need a refresh to see the new one.
+   ===================================================================== */
+@font-face{font-family:"Geizer";src:url("../home/fonts/geizer.woff?v=2") format("woff");font-display:swap}
+:root{--bg:#1f1f1f;--bar:#262626;--line:#3c3c3c;--btn:#333;--text:#e6e6e6;--muted:#a8a8a8;--gold:#f5d7a1}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--text);font:15px/1.4 Roboto,system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;flex-direction:column}
+
+.bar{flex:none;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;background:var(--bar);border-bottom:1px solid var(--line);position:relative;z-index:2}
+.bar h1{margin:0 auto 0 0;font:400 26px/1 Geizer,"Saira Semi Condensed",sans-serif;letter-spacing:.03em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+.grp{display:flex;align-items:center;gap:4px}
+button,.dl{display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:38px;padding:0 10px;border:1px solid #4a4a4a;border-radius:6px;background:var(--btn);color:#fff;font:700 14px "Saira Semi Condensed",sans-serif;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;text-decoration:none}
+button:hover,.dl:hover{border-color:var(--gold);color:var(--gold)}
+button:disabled{opacity:.4;cursor:default;border-color:#4a4a4a;color:#fff}
+button svg{width:18px;height:18px}
+.dl svg{width:18px;height:18px}
+.dl{background:var(--gold);border-color:var(--gold);color:#1a1a1a}
+.dl:hover{background:#fff;border-color:#fff;color:#1a1a1a}
+.pageno{display:flex;align-items:center;gap:6px;color:var(--muted);font:700 14px "Saira Semi Condensed",sans-serif;letter-spacing:.05em;text-transform:uppercase}
+.pageno input{width:52px;height:38px;border:1px solid #4a4a4a;border-radius:6px;background:#1a1a1a;color:#fff;font:600 15px Roboto,sans-serif;text-align:center}
+.pageno input:focus{outline:none;border-color:var(--gold)}
+
+.progress{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:var(--gold);transition:width .2s}
+
+#scroller{flex:1;overflow:auto;-webkit-overflow-scrolling:touch}
+#pages{display:flex;flex-direction:column;align-items:center;gap:18px;padding:22px 14px 40px;min-width:min-content}
+.page{position:relative;background:#2b2b2b;box-shadow:0 10px 30px rgba(0,0,0,.45);border-radius:3px;overflow:hidden}
+.page canvas{display:block;width:100%;height:100%}
+.page .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#555;font:400 40px Geizer,sans-serif}
+.page canvas+.num{display:none}
+.page a.lnk{position:absolute;display:block}
+.page a.lnk:hover{background:rgba(245,215,161,.18);outline:1px solid rgba(245,215,161,.5)}
+.msg{padding:60px 20px;text-align:center;color:var(--muted)}
+.msg a{color:var(--gold)}
+
+@media (max-width:620px){
+  .bar{gap:6px;padding:8px 10px;flex-wrap:nowrap;justify-content:space-between}
+  .bar h1,.zoom,.pageno .word{display:none}
+  .dl .long{display:none}
+  #pages{gap:12px;padding:14px 8px 30px}
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <h1>Core Rules</h1>
+  <div class="grp">
+    <button type="button" id="prev" aria-label="Previous page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <label class="pageno"><span class="word">Page</span> <input id="pageInput" type="text" inputmode="numeric" value="1" aria-label="Page number"> / <span id="pageCount">&ndash;</span></label>
+    <button type="button" id="next" aria-label="Next page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+  </div>
+  <div class="grp zoom">
+    <button type="button" id="zoomOut" aria-label="Zoom out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+    <button type="button" id="zoomFit">Fit</button>
+    <button type="button" id="zoomIn" aria-label="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+  </div>
+  <a class="dl" id="download" href="Bitzkrieg28_Core_Rules.pdf" download aria-label="Download the PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span class="long">&nbsp;Download PDF</span></a>
+  <div class="progress" id="progress"></div>
+</div>
+
+<div id="scroller"><div id="pages"></div></div>
+
+<script src="pdfjs/pdf.js"></script>
+<script>
+(function () {
+  var PDF_URL = "Bitzkrieg28_Core_Rules.pdf";
+  var MAX_WIDTH = 900;          // page width at "Fit" on big screens (CSS px)
+  var ZOOMS = [0.6, 0.75, 1, 1.25, 1.5, 2, 2.5];
+
+  var lib = window.pdfjsLib;
+  var scroller = document.getElementById("scroller");
+  var pagesEl = document.getElementById("pages");
+  var pageInput = document.getElementById("pageInput");
+  var progress = document.getElementById("progress");
+  var doc = null, pages = [], zoomIdx = ZOOMS.indexOf(1), current = 1;
+
+  function fail(e) {
+    progress.style.width = "0";
+    pagesEl.innerHTML = '<div class="msg">The rulebook could not be shown here. <a href="' + PDF_URL + '">Open the PDF instead</a>.</div>';
+    if (window.console) console.error(e);
+  }
+  if (!lib) { fail("pdf.js missing"); return; }
+  lib.GlobalWorkerOptions.workerSrc = "pdfjs/pdf.worker.js";
+
+  function fitWidth() { return Math.min(MAX_WIDTH, scroller.clientWidth - (window.innerWidth <= 620 ? 16 : 28)); }
+  function cssWidth() { return Math.round(fitWidth() * ZOOMS[zoomIdx]); }
+
+  // ---------- layout ----------
+  function layout() {
+    var w = cssWidth();
+    pages.forEach(function (p) {
+      p.el.style.width = w + "px";
+      p.el.style.height = Math.round(w * p.ratio) + "px";
+      if (p.canvas && p.renderedWidth !== w) { unrender(p); }
+    });
+    document.getElementById("zoomOut").disabled = zoomIdx === 0;
+    document.getElementById("zoomIn").disabled = zoomIdx === ZOOMS.length - 1;
+    queueVisible();
+  }
+
+  // ---------- rendering (only pages near the screen, to save memory on phones) ----------
+  function render(p) {
+    if (p.canvas || p.busy) return;
+    p.busy = true;
+    var w = cssWidth();
+    doc.getPage(p.n).then(function (page) {
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var base = page.getViewport({ scale: 1 });
+      var vp = page.getViewport({ scale: (w / base.width) * dpr });
+      var c = document.createElement("canvas");
+      c.width = Math.floor(vp.width); c.height = Math.floor(vp.height);
+      return page.render({ canvasContext: c.getContext("2d"), viewport: vp }).promise.then(function () {
+        p.busy = false;
+        if (cssWidth() !== w || !p.near) return;      // zoom changed or scrolled away meanwhile
+        p.el.insertBefore(c, p.el.firstChild);
+        p.canvas = c; p.renderedWidth = w;
+        addLinks(p, page, page.getViewport({ scale: w / base.width }));
+      });
+    }).catch(function (e) { p.busy = false; if (window.console) console.error(e); });
+  }
+  function unrender(p) {
+    if (p.canvas) { p.canvas.width = 0; p.canvas.height = 0; p.canvas.remove(); p.canvas = null; }
+    Array.prototype.slice.call(p.el.querySelectorAll("a.lnk")).forEach(function (a) { a.remove(); });
+  }
+
+  // clickable links inside the PDF (contents page, web links)
+  function addLinks(p, page, vp) {
+    page.getAnnotations().then(function (anns) {
+      anns.forEach(function (a) {
+        if (a.subtype !== "Link" || (!a.url && !a.dest)) return;
+        var r = vp.convertToViewportRectangle(a.rect);
+        var x = Math.min(r[0], r[2]), y = Math.min(r[1], r[3]);
+        var link = document.createElement("a");
+        link.className = "lnk";
+        link.style.left = x + "px"; link.style.top = y + "px";
+        link.style.width = Math.abs(r[2] - r[0]) + "px"; link.style.height = Math.abs(r[3] - r[1]) + "px";
+        if (a.url) {
+          link.href = a.url; link.target = "_blank"; link.rel = "noopener";
+        } else {
+          link.href = "#";
+          link.addEventListener("click", function (ev) { ev.preventDefault(); goToDest(a.dest); });
+        }
+        p.el.appendChild(link);
+      });
+    });
+  }
+  function goToDest(dest) {
+    var d = typeof dest === "string" ? doc.getDestination(dest) : Promise.resolve(dest);
+    d.then(function (arr) {
+      if (!arr) return;
+      return typeof arr[0] === "number" ? arr[0] : doc.getPageIndex(arr[0]);
+    }).then(function (i) { if (i != null) goTo(i + 1); });
+  }
+
+  var queued = false;
+  function queueVisible() {
+    if (queued) return; queued = true;
+    requestAnimationFrame(function () {
+      queued = false;
+      var top = scroller.scrollTop, h = scroller.clientHeight;
+      var bestN = current, bestVis = -1;
+      pages.forEach(function (p) {
+        var y = p.el.offsetTop, ph = p.el.offsetHeight;
+        p.near = y + ph > top - h * 1.5 && y < top + h * 2.5;
+        if (p.near) render(p); else unrender(p);
+        var vis = Math.min(y + ph, top + h) - Math.max(y, top);
+        if (vis > bestVis) { bestVis = vis; bestN = p.n; }
+      });
+      setCurrent(bestN);
+    });
+  }
+  function setCurrent(n) {
+    current = n;
+    if (document.activeElement !== pageInput) pageInput.value = n;
+    document.getElementById("prev").disabled = n <= 1;
+    document.getElementById("next").disabled = n >= pages.length;
+  }
+  function goTo(n) {
+    n = Math.max(1, Math.min(pages.length, n | 0));
+    var p = pages[n - 1]; if (!p) return;
+    scroller.scrollTop = p.el.offsetTop - 14;
+    setCurrent(n); queueVisible();
+  }
+  function setZoom(i) {
+    var frac = scroller.scrollTop / Math.max(1, scroller.scrollHeight);
+    zoomIdx = Math.max(0, Math.min(ZOOMS.length - 1, i));
+    layout();
+    scroller.scrollTop = frac * scroller.scrollHeight;
+    scroller.scrollLeft = (scroller.scrollWidth - scroller.clientWidth) / 2;
+  }
+
+  // ---------- controls ----------
+  document.getElementById("prev").onclick = function () { goTo(current - 1); };
+  document.getElementById("next").onclick = function () { goTo(current + 1); };
+  document.getElementById("zoomIn").onclick = function () { setZoom(zoomIdx + 1); };
+  document.getElementById("zoomOut").onclick = function () { setZoom(zoomIdx - 1); };
+  document.getElementById("zoomFit").onclick = function () { setZoom(ZOOMS.indexOf(1)); };
+  pageInput.addEventListener("keydown", function (e) { if (e.key === "Enter") { goTo(parseInt(pageInput.value, 10) || 1); pageInput.blur(); } });
+  pageInput.addEventListener("blur", function () { pageInput.value = current; });
+  scroller.addEventListener("scroll", queueVisible, { passive: true });
+  var lastW = 0, rT;
+  window.addEventListener("resize", function () {
+    clearTimeout(rT);
+    rT = setTimeout(function () { if (scroller.clientWidth !== lastW) { lastW = scroller.clientWidth; setZoom(zoomIdx); } }, 150);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.target.tagName === "INPUT") return;
+    if (e.key === "ArrowRight" || e.key === "PageDown") { goTo(current + 1); e.preventDefault(); }
+    if (e.key === "ArrowLeft" || e.key === "PageUp") { goTo(current - 1); e.preventDefault(); }
+  });
+
+  // ---------- load ----------
+  var task = lib.getDocument({ url: PDF_URL });
+  task.onProgress = function (d) { if (d.total) progress.style.width = Math.min(100, d.loaded / d.total * 100) + "%"; };
+  task.promise.then(function (pdf) {
+    doc = pdf;
+    document.getElementById("pageCount").textContent = pdf.numPages;
+    // all pages share one size in this rulebook; use page 1 for the shape, fix up others when rendered
+    return pdf.getPage(1).then(function (first) {
+      var v = first.getViewport({ scale: 1 }), ratio = v.height / v.width;
+      for (var n = 1; n <= pdf.numPages; n++) {
+        var el = document.createElement("div");
+        el.className = "page";
+        el.innerHTML = '<div class="num">' + n + '</div>';
+        el.setAttribute("aria-label", "Page " + n);
+        pagesEl.appendChild(el);
+        pages.push({ n: n, el: el, ratio: ratio, canvas: null, busy: false, near: false });
+      }
+      lastW = scroller.clientWidth;
+      layout();
+      progress.style.width = "100%";
+      setTimeout(function () { progress.style.opacity = "0"; }, 400);
+      var m = /page=(\d+)/.exec(location.hash);
+      if (m) goTo(parseInt(m[1], 10));
+    });
+  }).catch(fail);
+})();
+</script>
+</body>
+</html>
