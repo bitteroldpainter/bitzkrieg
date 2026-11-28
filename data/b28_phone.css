@@ -14,6 +14,19 @@ html{
   padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
 }
 
+/* Full-screen overlays (card preview, portrait cropper) sit on top of the page, so they need
+   their own room for the clock strip and the home line, or their buttons end up underneath. */
+html #generated-card-overlay{
+  padding-top: calc(24px + env(safe-area-inset-top, 0px)) !important;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  padding-left: calc(24px + env(safe-area-inset-left, 0px)) !important;
+  padding-right: calc(24px + env(safe-area-inset-right, 0px)) !important;
+}
+html #portrait-cropper-overlay{
+  padding-top: calc(22px + env(safe-area-inset-top, 0px)) !important;
+  padding-bottom: calc(22px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
 /* Installed app: no rubber-band bounce revealing white behind the page, no text-size jumps on rotate */
 html.b28-standalone, html.b28-standalone body{ overscroll-behavior-y: none; }
 html{ -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
@@ -54,4 +67,8 @@ html{ -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 }
 
 /* Never print the install tip */
-@media print{ .b28-install{ display: none !important; } html{ padding: 0 !important; } }
+@media print{
+  .b28-install{ display: none !important; }
+  html{ padding: 0 !important; }
+  html #generated-card-overlay{ padding: 0 !important; }
+}
