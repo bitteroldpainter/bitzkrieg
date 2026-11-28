@@ -1,0 +1,57 @@
+/* Bitzkrieg 28 - phone and home-screen app tweaks, shared by every page.
+   Loaded after each page's own styles. Desktop layout is not touched. */
+
+/* Edge to edge on iPhone: the app runs under the clock/battery strip and the home line,
+   so keep the content inside the safe area (all values are 0 on screens without a notch). */
+html{
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+}
+.b28-welcome{
+  padding-top: calc(40px + env(safe-area-inset-top, 0px)) !important;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* Installed app: no rubber-band bounce revealing white behind the page, no text-size jumps on rotate */
+html.b28-standalone, html.b28-standalone body{ overscroll-behavior-y: none; }
+html{ -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+/* Touch screens: iPhones zoom into any text field under 16px - keep them at 16px */
+@media (pointer: coarse){
+  input:not([type=checkbox]):not([type=radio]):not([type=range]), select, textarea{
+    font-size: 16px !important;
+  }
+  /* Fighter Forge: bigger stat arrows and Add/Remove buttons for thumbs */
+  .stat-btn-vert{
+    width: 40px !important;
+    height: 30px !important;
+    font-size: 0.95rem !important;
+  }
+  .item-actions button{
+    min-height: 34px;
+    padding: 0.35rem 0.9rem !important;
+    font-size: 0.85rem !important;
+  }
+  button, select, summary, label{ touch-action: manipulation; }
+}
+
+/* Team / Warband Builder on phones: fighter name on its own line, buttons underneath */
+@media (max-width: 600px){
+  html .fighterHead{
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  html .fighterHead .name{
+    white-space: normal !important;
+    max-width: none !important;
+  }
+  html .fighterHead .meta{ display: none !important; }
+  html .fighterHead .right{ align-items: stretch !important; }
+  html .fighterHead .actionsRow{ justify-content: flex-start !important; }
+}
+
+/* Never print the install tip */
+@media print{ .b28-install{ display: none !important; } html{ padding: 0 !important; } }

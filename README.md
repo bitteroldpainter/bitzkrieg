@@ -45,3 +45,15 @@ Wording such as Psyker/Warlock, Psychic Powers/Spells, MV/CV and Team/Warband li
 - Exported fighters and teams now include `"game": "mortalis"` or `"wr"`. Older files are recognised from their weapons and item names.
 - Loading a file made for the other game asks whether to switch game and load it there.
 - Each game keeps its own autosave, roster and settings in the browser. (Before, both apps shared the same browser storage, so W&R data could end up in the Mortalis roster and vice versa; anything belonging to W&R is moved to W&R automatically on first visit.)
+
+## Home-screen app (iPhone / Android)
+The builder can be installed as an app: open https://bitteroldpainter.github.io/bitzkrieg/ in Safari,
+tap **Share → Add to Home Screen** (Android: **Install app**). It then opens full screen, without browser bars, and works offline.
+
+| File | What it is |
+|---|---|
+| `manifest.webmanifest` | App name, icon and start page (`roster.html`) |
+| `icons/` | App icons (`icon-1024.jpg` is the master; the others are made from it) |
+| `sw.js` | Offline helper: online it always loads the newest files, offline it uses the last saved copy. No need to touch it when updating rules or pages; only add new files to its `PRECACHE` list (and bump `VERSION`) if you add new images the app needs offline |
+| `data/b28_app.js` | Registers the offline helper and shows the "Add to Home Screen" tip on phones |
+| `data/b28_phone.css` | Phone tweaks: bigger touch buttons, no zoom on text fields, iPhone notch/home-line spacing |

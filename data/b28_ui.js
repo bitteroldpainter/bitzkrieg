@@ -425,6 +425,24 @@
     o.textContent = "Office mode \u2197";
     o.title = "Open the builder in a new tab with a plain, light look";
     o.style.marginRight = "auto";
+    // Installed home-screen app: there are no tabs (a new window would not see the app's saved
+    // data), so switch the look in place and offer the way back.
+    var standaloneApp = false;
+    try { standaloneApp = navigator.standalone === true || window.matchMedia("(display-mode: standalone)").matches; } catch (e) {}
+    if (standaloneApp && !inIframe) {
+      o.textContent = officeMode ? "Normal look" : "Office mode";
+      o.title = officeMode ? "Back to the game's own look" : "Switch to a plain, light look";
+      o.addEventListener("click", function () {
+        var u = new URL(location.href);
+        u.searchParams.set("game", B28.gameKey);
+        u.searchParams.set("skin", officeMode ? "normal" : "office");
+        location.href = u.toString();
+      });
+      if (after) { after.style.marginRight = "0"; after.parentNode.insertBefore(o, after.nextSibling); }
+      else if (chooser) chooser.insertBefore(o, chooser.firstChild);
+      else document.body.insertBefore(o, document.body.firstChild);
+      return;
+    }
     o.addEventListener("click", function () {
       if (inIframe) { openFullPage("office"); return; }
       var w = window.open(location.pathname + "?game=" + B28.gameKey + "&skin=office", "_blank");
@@ -436,7 +454,16 @@
   }
   function addFullPageButton () {
     var chooser = document.querySelector(".b28-chooser");
-    if (officeMode) return;
+    if (officeMode) {
+      // In the installed app, Office mode keeps a "Normal look" button to switch back
+      var sa = false;
+      try { sa = navigator.standalone === true || window.matchMedia("(display-mode: standalone)").matches; } catch (e) {}
+      if (sa && !inIframe) {
+        if (chooser) { chooser.style.display = "flex"; chooser.style.justifyContent = "flex-end"; }
+        addOfficeButton(chooser, null);
+      }
+      return;
+    }
     if (!inIframe) {
       // Already on its own page: just offer Office mode
       if (chooser) { chooser.style.display = "flex"; chooser.style.justifyContent = "flex-end"; }

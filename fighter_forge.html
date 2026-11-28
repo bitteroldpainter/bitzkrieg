@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Fighter Forge</title>
   <!-- Shared rules database + game switch (Mortalis / Wrath & Ruin) -->
   <script src="data/bitzkrieg_data.js"></script>
@@ -1036,6 +1036,17 @@ html.game-wr .b28-game-btn.active{background:#57151c;color:#f4e5d7;border-color:
     html .b28-chooser .b28-game-btn{font-size:.72rem!important;padding:.28rem .72rem!important;line-height:1.2!important;min-height:0!important}
     @media (max-width:640px){html .b28-chooser.b28-chooser-float{position:static;justify-content:center;margin:0 auto 8px!important}}
   </style>
+  <!-- Home-screen app (icon, full screen, offline) -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="theme-color" content="#0f1216" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Fighter Forge" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="stylesheet" href="data/b28_phone.css" />
+  <script src="data/b28_app.js" defer></script>
 </head>
 <body>
   <div class="app">
